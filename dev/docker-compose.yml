@@ -1,0 +1,31 @@
+# ONLY FOR DEV
+version: "3.9"
+services:
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_PASSWORD=moviedb-dev
+      - POSTGRES_USER=moviedb-dev
+      - POSTGRES_DB=moviedb
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=user@domain.com
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    ports:
+      - 5050:80
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+  server:
+    build:
+      context: ..
+      dockerfile: ./dev/server.Dockerfile
+    ports:
+      - 3000:80
+    volumes:
+      - ../src:/app/src
+volumes:
+  pg_data:
+  pgadmin:
