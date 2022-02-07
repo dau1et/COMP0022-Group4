@@ -27,7 +27,7 @@ services:
     ports:
       - 3000:80
     volumes:
-      - ../src:/app/src
+      - ../app:/code/app
 volumes:
   pg_data:
   pgadmin:
