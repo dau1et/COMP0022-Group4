@@ -1,5 +1,5 @@
 CREATE TABLE movie (
-  movie_id BIGINT PRIMARY KEY,
+  movie_id BIGINT PRIMARY KEY UNIQUE,
   title VARCHAR(255) NOT NULL,
   overview VARCHAR(1000) NOT NULL,
   runtime TIMESTAMP NOT NULL, -- lets keep it Timestamp atm, we can later change it to something else in the future
@@ -9,7 +9,7 @@ CREATE TABLE movie (
   release_date TIMESTAMP NOT NULL, -- same, might chage the datatype later
   budget BIGINT NOT NULL,
   revenue BIGINT NOT NULL,
-  ISO639_1 VARCHAR(2) REFERENCES language(ISO639_1) NOT NULL,-- can we use a dash in the field name?
+  --ISO639_1 VARCHAR(2) REFERENCES movie_language(ISO639_1) NOT NULL,-- can we use a dash in the field name?
   poster_path VARCHAR(100) NOT NULL
 );
 
@@ -26,18 +26,18 @@ CREATE TABLE movie_tmdb(
   PRIMARY KEY(movie_id, tmdb_id)
 );
 
+CREATE TABLE movie_language(
+  ISO639_1 VARCHAR(2) PRIMARY KEY,
+  language_name VARCHAR(20) NOT NULL
+);
 
 CREATE TABLE movie_translation(
   movie_id BIGINT REFERENCES movie(movie_id) NOT NULL,
-  ISO639_1 VARCHAR(2) NOT NULL,
+  ISO639_1 VARCHAR(2) REFERENCES movie_language(ISO639_1) NOT NULL,
   PRIMARY KEY(movie_id, ISO639_1)
 );
 
-CREATE TABLE language(
-  ISO639_1 VARCHAR(2) REFERENCES movie_translation(ISO639_1) NOT NULL,
-  language_name VARCHAR(20) NOT NULL,
-  PRIMARY KEY(ISO639_1)
-);
+
 
 
 CREATE TABLE personality_data(
@@ -59,17 +59,18 @@ CREATE TABLE rating(
 );
 
 
+CREATE TABLE actor(
+  actor_id INT PRIMARY KEY,
+  first_name VARCHAR(20) NOT NULL,
+  last_name VARCHAR(20) NOT NULL
+);
+
 CREATE TABLE movie_actor(
   movie_id BIGINT REFERENCES movie(movie_id) NOT NULL,
   actor_id INT REFERENCES actor(actor_id) NOT NULL,
   PRIMARY KEY(movie_id, actor_id)
 );
 
-CREATE TABLE actor(
-  actor_id INT PRIMARY KEY,
-  first_name VARCHAR(20) NOT NULL,
-  last_name VARCHAR(20) NOT NULL
-);
 
 CREATE TABLE publisher(
   publisher_id INT PRIMARY KEY,
@@ -88,4 +89,5 @@ CREATE TABLE movie_genre(
   genre VARCHAR(20) NOT NULL,
   PRIMARY KEY(movie_id, genre)
 );
+
 
