@@ -21,6 +21,7 @@ async def create_movie_csv(session):
             name,
             response.get("overview"),
             response.get("runtime"),
+            response.get("popularity"),
             response.get("adult"),
             response.get("status"),
             response.get("release_date"),
