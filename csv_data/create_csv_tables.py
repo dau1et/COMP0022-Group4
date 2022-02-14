@@ -32,7 +32,8 @@ async def create_movie_csv(session):
             response.get("budget"),
             response.get("revenue"),
             response.get("original_language"),
-            response.get("poster_path")
+            response.get("poster_path"),
+            response.get("backdrop_path")
         ])
         movie_ids.add(id)
 
