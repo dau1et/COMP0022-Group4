@@ -98,21 +98,24 @@ def create_tag_csv():
 
 
 async def create_language_csv(session):
+    language_isos = set()
     with open("Language.csv", "w", newline="", encoding="utf-8") as language_csv:
         language_writer = csv.writer(language_csv)
         languages = await request_tmdb_languages(session)
         for language in languages:
             language_writer.writerow([language["iso_639_1"], language["english_name"]])
+            language_isos.add(language["iso_639_1"])
         print("<---- Completed writing Language.csv ---->", flush=True)
+    return language_isos
 
 
-async def create_translation_csv(session):
-    async def write_translation(session, movie_translation_writer, id):
+async def create_translation_csv(session, language_isos):
+    async def write_translation(session, language_isos, movie_translation_writer, id):
         existing_translations = set()
         response = await request_tmdb_translations(session, movie_tmdb_id[id])
         for translation in response.get("translations", []):
             iso = translation.get("iso_639_1")
-            if iso not in existing_translations:
+            if iso in language_isos and iso not in existing_translations:
                 movie_translation_writer.writerow([
                     id,
                     iso,
@@ -124,7 +127,7 @@ async def create_translation_csv(session):
         with open("ml-latest-small/movies.csv", encoding="utf-8") as ml_movies_csv:
             ml_movies_reader = csv.reader(ml_movies_csv)
             next(ml_movies_reader, None)  # Skip header
-            await asyncio.gather(*[write_translation(session, movie_translation_writer, id) for id, _, _ in ml_movies_reader])
+            await asyncio.gather(*[write_translation(session, language_isos, movie_translation_writer, id) for id, _, _ in ml_movies_reader])
             print("<---- Completed writing MovieTranslation.csv ---->", flush=True)
 
 
@@ -232,8 +235,8 @@ async def main():
         await create_actor_csv(session)
         create_genre_csv()
         create_tag_csv()
-        await create_language_csv(session)
-        await create_translation_csv(session)
+        language_isos = await create_language_csv(session)
+        await create_translation_csv(session, language_isos)
         create_rating_csv(movie_ids)
         create_personality_data_csv()
         await create_publisher_csv(session)
