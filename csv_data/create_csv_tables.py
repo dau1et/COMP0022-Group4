@@ -1,6 +1,8 @@
-import aiohttp
 import asyncio
 import csv
+import platform
+
+import aiohttp
 
 
 API_KEY = "673a60b2dc1f76450ef8d5eaf431c189"
@@ -14,6 +16,8 @@ with open("ml-latest-small/links.csv", encoding="utf-8") as ml_links_csv:
 
 
 async def create_movie_csv(session):
+    movie_ids = set()
+
     async def write_movie(session, movie_writer, id, name):
         response = await request_tmdb_movie(session, movie_tmdb_id[id])
         movie_writer.writerow([
@@ -30,6 +34,7 @@ async def create_movie_csv(session):
             response.get("original_language"),
             response.get("poster_path")
         ])
+        movie_ids.add(id)
 
     with open("Movie.csv", "w", newline="", encoding="utf-8") as movie_csv:
         movie_writer = csv.writer(movie_csv)
@@ -38,7 +43,7 @@ async def create_movie_csv(session):
             next(ml_movies_reader, None)  # Skip header
             await asyncio.gather(*[write_movie(session, movie_writer, id, name) for id, name, _ in ml_movies_reader])
             print("<---- Completed writing Movie.csv ---->", flush=True)
-
+    return movie_ids
 
 async def create_actor_csv(session):
     actor_id = 0
@@ -123,19 +128,20 @@ async def create_translation_csv(session):
             print("<---- Completed writing MovieTranslation.csv ---->", flush=True)
 
 
-def create_rating_csv():
+def create_rating_csv(movie_ids):
     with open("Rating.csv", "w", newline="", encoding="utf-8") as rating_csv:
         rating_writer = csv.writer(rating_csv)
         with open("ml-latest-small/ratings.csv", encoding="utf-8") as ml_ratings_csv:
             ml_ratings_reader = csv.reader(ml_ratings_csv)
             next(ml_ratings_reader, None)  # Skip header
             for user_id, movie_id, rating, timestamp in ml_ratings_reader:
-                rating_writer.writerow([
-                    user_id.strip(),
-                    movie_id.strip(),
-                    rating.strip(),
-                    timestamp.strip()
-                ])
+                if movie_id.strip() in movie_ids:
+                    rating_writer.writerow([
+                        user_id.strip(),
+                        movie_id.strip(),
+                        rating.strip(),
+                        timestamp.strip()
+                    ])
             print("<---- Completed writing Rating.csv ---->", flush=True)
 
 
@@ -217,18 +223,19 @@ async def request_tmdb_translations(session, id):
 
 async def main():
     async with aiohttp.ClientSession("https://api.themoviedb.org") as session:
-        await create_movie_csv(session)
+        movie_ids = await create_movie_csv(session)
         await create_actor_csv(session)
         create_genre_csv()
         create_tag_csv()
         await create_language_csv(session)
         await create_translation_csv(session)
-        create_rating_csv()
+        create_rating_csv(movie_ids)
         create_personality_data_csv()
         await create_publisher_csv(session)
         create_movie_tmdb_csv()
 
 
 if __name__ == "__main__":
-    # asyncio.run(main())
-    asyncio.get_event_loop().run_until_complete(main())
+    if platform.system() == "Windows":
+        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+    asyncio.run(main())
