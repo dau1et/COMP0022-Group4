@@ -37,7 +37,7 @@ async def create_movie_csv(session):
             ml_movies_reader = csv.reader(ml_movies_csv)
             next(ml_movies_reader, None)  # Skip header
             await asyncio.gather(*[write_movie(session, movie_writer, id, name) for id, name, _ in ml_movies_reader])
-            print("<---- Completed writing Movie.csv ---->")
+            print("<---- Completed writing Movie.csv ---->", flush=True)
 
 
 async def create_actor_csv(session):
@@ -62,7 +62,7 @@ async def create_actor_csv(session):
             ml_movies_reader = csv.reader(ml_movies_csv)
             next(ml_movies_reader, None)  # Skip header
             await asyncio.gather(*[write_actor(session, actor_writer, movie_actor_writer, id) for id, _, _ in ml_movies_reader])
-            print("<---- Completed writing Actor.csv and MovieActor.csv ---->")
+            print("<---- Completed writing Actor.csv and MovieActor.csv ---->", flush=True)
 
 
 def create_genre_csv():
@@ -74,18 +74,22 @@ def create_genre_csv():
             for id, _, genres in ml_movies_reader:
                 for genre in genres.split("|"):
                     movie_genre_writer.writerow([id, genre])
-            print("<---- Completed writing MovieGenre.csv ---->")
+            print("<---- Completed writing MovieGenre.csv ---->", flush=True)
 
 
 def create_tag_csv():
+    existing_tags = set()
+
     with open("MovieTag.csv", "w", newline="", encoding="utf-8") as movie_tag_csv:
         movie_tag_writer = csv.writer(movie_tag_csv)
         with open("ml-latest-small/tags.csv", encoding="utf-8") as ml_tags_csv:
             ml_tags_reader = csv.reader(ml_tags_csv)
             next(ml_tags_reader, None)  # Skip header
             for _, id, tag, _ in ml_tags_reader:
-                movie_tag_writer.writerow([id, tag])
-            print("<---- Completed writing MovieTag.csv ---->")
+                if (id, tag.lower()) not in existing_tags:
+                    movie_tag_writer.writerow([id, tag])
+                    existing_tags.add((id, tag.lower()))
+            print("<---- Completed writing MovieTag.csv ---->", flush=True)
 
 
 async def create_language_csv(session):
@@ -94,17 +98,21 @@ async def create_language_csv(session):
         languages = await request_tmdb_languages(session)
         for language in languages:
             language_writer.writerow([language["iso_639_1"], language["english_name"]])
-        print("<---- Completed writing Language.csv ---->")
+        print("<---- Completed writing Language.csv ---->", flush=True)
 
 
 async def create_translation_csv(session):
     async def write_translation(session, movie_translation_writer, id):
+        existing_translations = set()
         response = await request_tmdb_translations(session, movie_tmdb_id[id])
         for translation in response.get("translations", []):
-            movie_translation_writer.writerow([
-                id,
-                translation.get("iso_639_1"),
-            ])
+            iso = translation.get("iso_639_1")
+            if iso not in existing_translations:
+                movie_translation_writer.writerow([
+                    id,
+                    iso,
+                ])
+                existing_translations.add(iso)
 
     with open("MovieTranslation.csv", "w", newline="", encoding="utf-8") as movie_translation_csv:
         movie_translation_writer = csv.writer(movie_translation_csv)
@@ -112,7 +120,7 @@ async def create_translation_csv(session):
             ml_movies_reader = csv.reader(ml_movies_csv)
             next(ml_movies_reader, None)  # Skip header
             await asyncio.gather(*[write_translation(session, movie_translation_writer, id) for id, _, _ in ml_movies_reader])
-            print("<---- Completed writing MovieTranslation.csv ---->")
+            print("<---- Completed writing MovieTranslation.csv ---->", flush=True)
 
 
 def create_rating_csv():
@@ -128,33 +136,42 @@ def create_rating_csv():
                     rating.strip(),
                     timestamp.strip()
                 ])
-            print("<---- Completed writing Rating.csv ---->")
+            print("<---- Completed writing Rating.csv ---->", flush=True)
 
 
 def create_personality_data_csv():
+    existing_users = set()
+
     with open("PersonalityData.csv", "w", newline="", encoding="utf-8") as personality_csv:
         personality_writer = csv.writer(personality_csv)
         with open("ml-latest-small/personality-data.csv", encoding="utf-8") as ml_personality_csv:
             ml_personality_reader = csv.reader(ml_personality_csv)
             next(ml_personality_reader, None)  # Skip header
             for user_id, openness, agreeableness, emotional_stability, conscientiousness, extraversion, *_ in ml_personality_reader:
-                personality_writer.writerow([
-                    user_id.strip(),
-                    openness.strip(),
-                    agreeableness.strip(),
-                    emotional_stability.strip(),
-                    conscientiousness.strip(),
-                    extraversion.strip()
-                ])
-            print("<---- Completed writing PersonalityData.csv ---->")
+                user_id = user_id.strip()
+                if user_id not in existing_users:
+                    personality_writer.writerow([
+                        user_id,
+                        openness.strip(),
+                        agreeableness.strip(),
+                        emotional_stability.strip(),
+                        conscientiousness.strip(),
+                        extraversion.strip()
+                    ])
+                    existing_users.add(user_id)
+            print("<---- Completed writing PersonalityData.csv ---->", flush=True)
 
 
 async def create_publisher_csv(session):
+    existing_publishers = set()
+
     async def write_actor(session, publisher_writer, movie_publisher_wrtier, id):
         response = await request_tmdb_movie(session, movie_tmdb_id[id])
         for publisher in response.get("production_companies", []):
             movie_publisher_wrtier.writerow([id, publisher["id"]])
-            publisher_writer.writerow([publisher["id"], publisher["name"], publisher["origin_country"]])
+            if publisher["id"] not in existing_publishers:
+                publisher_writer.writerow([publisher["id"], publisher["name"], publisher["origin_country"]])
+                existing_publishers.add(publisher["id"])
     
     with open("Publisher.csv", "w", newline="", encoding="utf-8") as publisher_csv, \
             open("MoviePublisher.csv", "w", newline="", encoding="utf-8") as movie_publisher_csv:
@@ -164,7 +181,7 @@ async def create_publisher_csv(session):
             ml_movies_reader = csv.reader(ml_movies_csv)
             next(ml_movies_reader, None)  # Skip header
             await asyncio.gather(*[write_actor(session, publisher_writer, movie_publisher_wrtier, id) for id, _, _ in ml_movies_reader])
-            print("<---- Completed writing Publisher.csv and MoviePublisher.csv ---->")
+            print("<---- Completed writing Publisher.csv and MoviePublisher.csv ---->", flush=True)
 
 
 def create_movie_tmdb_csv():
@@ -175,7 +192,7 @@ def create_movie_tmdb_csv():
             next(ml_links_reader, None)  # Skip header
             for movie_id, _, tmdb_id in ml_links_reader:
                 movie_tmdb_writer.writerow([movie_id, tmdb_id])
-            print("<---- Completed writing MovieTmdb.csv ---->")
+            print("<---- Completed writing MovieTmdb.csv ---->", flush=True)
 
 
 async def request_tmdb_movie(session, id):
