@@ -129,19 +129,24 @@ async def create_translation_csv(session):
 
 
 def create_rating_csv(movie_ids):
+    existing_ratings = set()
+
     with open("Rating.csv", "w", newline="", encoding="utf-8") as rating_csv:
         rating_writer = csv.writer(rating_csv)
         with open("ml-latest-small/ratings.csv", encoding="utf-8") as ml_ratings_csv:
             ml_ratings_reader = csv.reader(ml_ratings_csv)
             next(ml_ratings_reader, None)  # Skip header
             for user_id, movie_id, rating, timestamp in ml_ratings_reader:
-                if movie_id.strip() in movie_ids:
+                user_id = user_id.strip()
+                movie_id = movie_id.strip()
+                if movie_id in movie_ids and (user_id, movie_id) not in existing_ratings:
                     rating_writer.writerow([
-                        user_id.strip(),
-                        movie_id.strip(),
+                        user_id,
+                        movie_id,
                         rating.strip(),
                         timestamp.strip()
                     ])
+                    existing_ratings.add((user_id, movie_id))
             print("<---- Completed writing Rating.csv ---->", flush=True)
 
 
