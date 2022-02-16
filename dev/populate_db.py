@@ -38,8 +38,6 @@ if __name__ == "__main__":
     # a list of (table_name, field_count) tuples
     tables = [ ("Language", 2), ("Movie", 13), ("MovieTmdb", 2), ("Actor", 3), ("MovieActor", 2), ("MovieGenre", 2), ("Publisher", 3), ("MoviePublisher", 2), ("PersonalityData", 6), ("MovieTag", 2), ("Rating", 4), ("MovieTranslation", 2)]
 
-#    tables = [ ("Language", 2), ("Movie", 12), ("MovieTmdb", 2), ("Actor", 3), ("MovieActor", 2), ("MovieGenre", 2), ("Publisher", 3), ("MoviePublisher", 2)]
-
     for table_name, field_count in tables:
         populate_table(table_name, field_count)
         print(table_name)
@@ -47,3 +45,4 @@ if __name__ == "__main__":
     connection.commit()
     cur.close()
     connection.close()
+
