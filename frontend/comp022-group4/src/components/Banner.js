@@ -24,7 +24,7 @@ function Banner() {
       style={{
         backgroundSize: "cover",
         backgroundImage: `url(
-          "https://image.tmdb.org/t/p/original/${movie?.backdrop_path}"
+          "https://www.ucl.ac.uk/news/sites/news/files/ucl_quad57-800x500_0.jpg"
         )`,
         backgroundPosition: "center center",
       }}
