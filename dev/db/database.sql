@@ -10,7 +10,7 @@ CREATE TABLE movie (
   runtime INT, -- lets keep it Timestamp atm, we can later change it to something else in the future
   popularity float8,
   adult BOOLEAN,
-  status VARCHAR(50),
+  status VARCHAR(50), -- remove it later
   release_date TIMESTAMP, -- same, might chage the datatype later
   budget BIGINT,
   revenue BIGINT,
