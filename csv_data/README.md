@@ -1,7 +1,7 @@
 **UC4**\
 PredictedMovieRatings.csv\
 ***format:***\
-[movie_id, predicted_rating, rating]\
+[movie_id, predicted_rating, average_rating]\
 e.g 1,3.4,3\
 
 **UC5**\
@@ -19,9 +19,4 @@ If someone had maximum of one personality type, what would they rate the movie?\
 Aggregate personality values to be interpretted on the frontend.\
 TagPersonalities.csv\
 ***format:***\
-[tag_id, agg_openness, agg_agreeableness, agg_emotional_stability, agg_conscientiousness, agg_extraversion]\
-
-Tags.csv\
-***format:***\
-[tag_id, tag]\
-e.g 1, Adventure\
+[tag, agg_openness, agg_agreeableness, agg_emotional_stability, agg_conscientiousness, agg_extraversion]\
