@@ -14,6 +14,16 @@ with open("ml-latest-small/links.csv", encoding="utf-8") as ml_links_csv:
     for movie_id, _, tmdb_id in ml_links_reader:
         movie_tmdb_id[movie_id] = tmdb_id
 
+tag_ids = {}
+with open("ml-latest-small/tags.csv", encoding="utf-8") as ml_tags_csv:
+    ml_tags_reader = csv.reader(ml_tags_csv)
+    next(ml_tags_reader, None)  # Skip header
+    tag_id = 0
+    for _, _, tag, _ in ml_tags_reader:
+        if tag.lower() not in tag_ids:
+            tag_ids[tag.lower()] = tag_id
+            tag_id += 1
+
 
 async def create_movie_csv(session):
     movie_ids = set()
@@ -45,6 +55,7 @@ async def create_movie_csv(session):
             await asyncio.gather(*[write_movie(session, movie_writer, id, name) for id, name, _ in ml_movies_reader])
             print("<---- Completed writing Movie.csv ---->", flush=True)
     return movie_ids
+
 
 async def create_actor_csv(session):
     actor_id = 0
@@ -84,17 +95,25 @@ def create_genre_csv():
 
 
 def create_tag_csv():
-    existing_tags = set()
+    with open("Tag.csv", "w", newline="", encoding="utf-8") as tag_csv:
+        tag_writer = csv.writer(tag_csv)
+        for tag, tag_id in tag_ids.items():
+            tag_writer.writerow([tag_id, tag])
+        print("<---- Completed writing Tag.csv ---->", flush=True)
 
+
+def create_movie_tag_csv():
+    existing_movie_tags = set()
     with open("MovieTag.csv", "w", newline="", encoding="utf-8") as movie_tag_csv:
         movie_tag_writer = csv.writer(movie_tag_csv)
         with open("ml-latest-small/tags.csv", encoding="utf-8") as ml_tags_csv:
             ml_tags_reader = csv.reader(ml_tags_csv)
             next(ml_tags_reader, None)  # Skip header
             for _, id, tag, _ in ml_tags_reader:
-                if (id, tag.lower()) not in existing_tags:
-                    movie_tag_writer.writerow([id, tag])
-                    existing_tags.add((id, tag.lower()))
+                tag_id = tag_ids[tag.lower()]
+                if (id, tag_id) not in existing_movie_tags:
+                    movie_tag_writer.writerow([id, tag_id])
+                    existing_movie_tags.add((id, tag_id))
             print("<---- Completed writing MovieTag.csv ---->", flush=True)
 
 
@@ -236,6 +255,7 @@ async def main():
         await create_actor_csv(session)
         create_genre_csv()
         create_tag_csv()
+        create_movie_tag_csv()
         language_isos = await create_language_csv(session)
         await create_translation_csv(session, language_isos)
         create_rating_csv(movie_ids)
