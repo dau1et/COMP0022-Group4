@@ -25,6 +25,13 @@ with open("ml-latest-small/tags.csv", encoding="utf-8") as ml_tags_csv:
             tag_id += 1
 
 
+avg_movie_ratings = {}
+with open("AverageMovieRatings.csv", encoding="utf-8") as avg_movie_ratings_csv:
+    avg_movie_ratings_reader = csv.reader(avg_movie_ratings_csv)
+    for movie_id, avg_rating in avg_movie_ratings_reader:
+        avg_movie_ratings[movie_id] = avg_rating
+
+
 movie_polarities = {}
 with open("MoviePolarity.csv", encoding="utf-8") as movie_polarity_csv:
     movie_polarity_reader = csv.reader(movie_polarity_csv)
@@ -42,6 +49,7 @@ async def create_movie_csv(session):
             name,
             response.get("overview"),
             response.get("runtime"),
+            avg_movie_ratings.get(id),
             response.get("popularity"),
             movie_polarities.get(id),
             response.get("adult"),
