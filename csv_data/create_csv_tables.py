@@ -25,6 +25,13 @@ with open("ml-latest-small/tags.csv", encoding="utf-8") as ml_tags_csv:
             tag_id += 1
 
 
+movie_polarities = {}
+with open("MoviePolarity.csv", encoding="utf-8") as movie_polarity_csv:
+    movie_polarity_reader = csv.reader(movie_polarity_csv)
+    for movie_id, polarity in movie_polarity_reader:
+        movie_polarities[movie_id] = polarity
+
+
 async def create_movie_csv(session):
     movie_ids = set()
 
@@ -36,6 +43,7 @@ async def create_movie_csv(session):
             response.get("overview"),
             response.get("runtime"),
             response.get("popularity"),
+            movie_polarities.get(id),
             response.get("adult"),
             response.get("status"),
             response.get("release_date"),
