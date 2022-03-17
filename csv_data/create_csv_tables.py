@@ -1,6 +1,5 @@
 import asyncio
 import csv
-import pathlib
 import platform
 
 import aiohttp
@@ -282,5 +281,4 @@ async def main():
 if __name__ == "__main__":
     if platform.system() == "Windows":
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
-    pathlib.Path("tables").mkdir(exist_ok=True)
     asyncio.run(main())
