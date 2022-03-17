@@ -8,7 +8,9 @@ CREATE TABLE movie (
   title VARCHAR(255) NOT NULL,
   overview VARCHAR(1000),
   runtime INT, -- lets keep it Timestamp atm, we can later change it to something else in the future
+  average_rating float8,
   popularity float8,
+  polarity float8,
   adult BOOLEAN,
   status VARCHAR(50), -- remove it later
   release_date TIMESTAMP, -- same, might chage the datatype later
@@ -17,12 +19,6 @@ CREATE TABLE movie (
   ISO639_1 VARCHAR(2) REFERENCES language(ISO639_1), -- can we use a dash in the field name?
   poster_path VARCHAR(100),
   backdrop_path VARCHAR(100)
-);
-
-CREATE TABLE movieTag (
-  movie_id BIGINT REFERENCES movie(movie_id) NOT NULL,
-  tag VARCHAR(100) NOT NULL,
-  PRIMARY KEY(movie_id, tag)
 );
 
 CREATE TABLE movieTmdb(
@@ -83,3 +79,45 @@ CREATE TABLE movieGenre(
   PRIMARY KEY(movie_id, genre)
 );
 
+CREATE TABLE predictedMovieRatings(
+  movie_id BIGINT REFERENCES movie(movie_id) PRIMARY KEY,
+  predicted_rating float8 NOT NULL
+);
+
+CREATE TABLE predictedPersonalityRatings(
+  movie_id BIGINT REFERENCES movie(movie_id) PRIMARY KEY,
+  pred_open float8 NOT NULL,
+  pred_agreeable float8 NOT NULL,
+  pred_emotionally_stable float8 NOT NULL,
+  pred_conscientious float8 NOT NULL,
+  pred_extrovert float8 NOT NULL
+);
+
+CREATE TABLE predictedPersonalityTraits(
+  movie_id BIGINT REFERENCES movie(movie_id) PRIMARY KEY,
+  openness VARCHAR(1),
+  agreeableness VARCHAR(1),
+  emotional_stability VARCHAR(1),
+  consientiousness VARCHAR(1),
+  extraversion VARCHAR(1)
+);
+
+CREATE TABLE tag(
+  tag_id BIGINT PRIMARY KEY UNIQUE,
+  tag VARCHAR(100)
+);
+
+CREATE TABLE tagPersonalities(
+  tag_id BIGINT REFERENCES tag(tag_id) PRIMARY KEY,
+  agg_openness float8 NOT NULL,
+  agg_agreeableness float8 NOT NULL,
+  agg_emotional_stability float8 NOT NULL,
+  agg_conscientiousness float8 NOT NULL,
+  agg_extraversion float8 NOT NULL
+);
+
+CREATE TABLE movieTag (
+  movie_id BIGINT REFERENCES movie(movie_id) NOT NULL,
+  tag_id BIGINT REFERENCES tag(tag_id) NOT NULL,
+  PRIMARY KEY(movie_id, tag_id)
+);

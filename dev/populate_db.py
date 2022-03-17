@@ -3,7 +3,7 @@ import csv
 import time
 
 def cast_check(val):
-    if not val:
+    if not val or val == 'None':
         return None  # account for the missing fields for a movie, and fill those fields with "NULL"
 
     try:
@@ -44,16 +44,21 @@ if __name__ == "__main__":
 
     cur = connection.cursor()
 
-    print("\npy: Populating the Database!")
+    print("\npy: Populating the Database!", flush=True)
 
     # a list of (table_name, field_count) tuples
-    tables = [("Language", 2), ("Movie", 13), ("MovieTmdb", 2), ("Actor", 3), ("MovieActor", 2), ("MovieGenre", 2), ("Publisher", 3), ("MoviePublisher", 2), ("PersonalityData", 6), ("MovieTag", 2), ("Rating", 4), ("MovieTranslation", 2)]
+    tables = [
+        ("Language", 2), ("Movie", 15), ("MovieTmdb", 2), ("Actor", 3), 
+        ("MovieActor", 2), ("MovieGenre", 2), ("Publisher", 3), ("MoviePublisher", 2), 
+        ("PersonalityData", 6), ("Rating", 4), ("MovieTranslation", 2),
+        ("PredictedMovieRatings", 2), ("PredictedPersonalityRatings", 6), ("PredictedPersonalityTraits", 6),
+        ("Tag", 2), ("TagPersonalities", 6), ("MovieTag", 2)
+    ]
 
     for table_name, field_count in tables:
         populate_table(table_name, field_count)
-        print(table_name)
+        print(table_name, flush=True)
 
     connection.commit()
     cur.close()
     connection.close()
-
