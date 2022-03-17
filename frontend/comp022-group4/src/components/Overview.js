@@ -22,42 +22,48 @@ function Overview({ movieId }) {
   if (movie === undefined) return(<div />);
   
   return (
-    <div className='overview'>
+    <div className='flex justify-between p-40'>
+
         <img 
-            className='overview_poster' 
+            className='object-contain mr-16 max-h-[600px]' 
             src={`${image_url}${movie.poster_path}`} 
             alt={movie.name} 
         />
-        <div className='overview_movie'>
-            <h1 className='overview_title uppercase'>{movie.title}</h1>
 
-            <div className='overview_details'>
-              <div className='genres'>
-                {movie.genres.map(genre => (
-                  <div key={genre.id} className='genre_tag'>
-                      {genre.name}
-                  </div>
-                ))}
+        <div className='flex flex-col h-auto max-h-[600px]'>
+            <h1 className='uppercase text-6xl h-20 font-semibold'>{movie.title}</h1>
+
+            <div className='flex flex-grow flex-col justify-between ml-4'>
+
+              <div className='overview_main'>
+                <div className='flex justify-start mb-2 h-10'>
+                  {movie.genres.map(genre => (
+                    <div key={genre.id} className='genre_tag'>
+                        {genre.name}
+                    </div>
+                  ))}
+                </div>
+                
+                <div className='tmdb_rating'>
+                  <img 
+                      className='tmdb_logo' 
+                      src={logo} 
+                      alt="TMDB"
+                  />
+                </div>
+                
+
+                <h2>Overview</h2>
+                <h3>{movie.overview}</h3>
               </div>
               
-              <div className='tmdb_rating'>
-                <img 
-                    className='tmdb_logo' 
-                    src={logo} 
-                    alt="TMDB"
-                />
-              </div>
-              
-
-              <h2>Overview</h2>
-              <h3>{movie.overview}</h3>
-
               <div className='overview_box'>
                 DETAILS
               </div>
             </div>
 
         </div>
+
     </div>
   )
 }

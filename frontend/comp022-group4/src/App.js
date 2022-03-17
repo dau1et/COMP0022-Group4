@@ -20,6 +20,8 @@ function App() {
     </div>
   );*/
 
+  // Longest name: 10338
+
   return (
     <div className="app">
       <Nav />
