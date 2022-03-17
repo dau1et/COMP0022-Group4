@@ -18,7 +18,7 @@ def populate_table(table_name, field_count):
     # for it to work locally: ../csv_data
     # later create an env var to change depending where it is run from
 
-    with open(f"/code/csv_data/{table_name}.csv", newline='', encoding='utf-8') as csvfile:
+    with open(f"/code/csv_data/tables/{table_name}.csv", newline='', encoding='utf-8') as csvfile:
         reader = csv.reader(csvfile, delimiter=',')
         for row in reader:
             fields = [cast_check(field) for field in row]
