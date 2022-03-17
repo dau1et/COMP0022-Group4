@@ -1,5 +1,6 @@
 import asyncio
 import csv
+import pathlib
 import platform
 
 import aiohttp
@@ -24,16 +25,14 @@ with open("ml-latest-small/tags.csv", encoding="utf-8") as ml_tags_csv:
             tag_ids[tag.lower()] = tag_id
             tag_id += 1
 
-
 avg_movie_ratings = {}
-with open("AverageMovieRatings.csv", encoding="utf-8") as avg_movie_ratings_csv:
+with open("tables/AverageMovieRatings.csv", encoding="utf-8") as avg_movie_ratings_csv:
     avg_movie_ratings_reader = csv.reader(avg_movie_ratings_csv)
     for movie_id, avg_rating in avg_movie_ratings_reader:
         avg_movie_ratings[movie_id] = avg_rating
 
-
 movie_polarities = {}
-with open("MoviePolarity.csv", encoding="utf-8") as movie_polarity_csv:
+with open("tables/MoviePolarity.csv", encoding="utf-8") as movie_polarity_csv:
     movie_polarity_reader = csv.reader(movie_polarity_csv)
     for movie_id, polarity in movie_polarity_reader:
         movie_polarities[movie_id] = polarity
@@ -63,7 +62,7 @@ async def create_movie_csv(session):
         ])
         movie_ids.add(id)
 
-    with open("Movie.csv", "w", newline="", encoding="utf-8") as movie_csv:
+    with open("tables/Movie.csv", "w", newline="", encoding="utf-8") as movie_csv:
         movie_writer = csv.writer(movie_csv)
         with open("ml-latest-small/movies.csv", encoding="utf-8") as ml_movies_csv:
             ml_movies_reader = csv.reader(ml_movies_csv)
@@ -87,8 +86,8 @@ async def create_actor_csv(session):
             actor_writer.writerow([actor_id, first_name, surname])
             actor_id += 1
 
-    with open("Actor.csv", "w", newline="", encoding="utf-8") as actor_csv, \
-            open("MovieActor.csv", "w", newline="", encoding="utf-8") as movie_actor_csv:
+    with open("tables/Actor.csv", "w", newline="", encoding="utf-8") as actor_csv, \
+            open("tables/MovieActor.csv", "w", newline="", encoding="utf-8") as movie_actor_csv:
         actor_writer = csv.writer(actor_csv)
         movie_actor_writer = csv.writer(movie_actor_csv)
         with open("ml-latest-small/movies.csv", encoding="utf-8") as ml_movies_csv:
@@ -99,7 +98,7 @@ async def create_actor_csv(session):
 
 
 def create_genre_csv():
-    with open("MovieGenre.csv", "w", newline="", encoding="utf-8") as movie_genre_csv:
+    with open("tables/MovieGenre.csv", "w", newline="", encoding="utf-8") as movie_genre_csv:
         movie_genre_writer = csv.writer(movie_genre_csv)
         with open("ml-latest-small/movies.csv", encoding="utf-8") as ml_movies_csv:
             ml_movies_reader = csv.reader(ml_movies_csv)
@@ -111,7 +110,7 @@ def create_genre_csv():
 
 
 def create_tag_csv():
-    with open("Tag.csv", "w", newline="", encoding="utf-8") as tag_csv:
+    with open("tables/Tag.csv", "w", newline="", encoding="utf-8") as tag_csv:
         tag_writer = csv.writer(tag_csv)
         for tag, tag_id in tag_ids.items():
             tag_writer.writerow([tag_id, tag])
@@ -120,7 +119,7 @@ def create_tag_csv():
 
 def create_movie_tag_csv():
     existing_movie_tags = set()
-    with open("MovieTag.csv", "w", newline="", encoding="utf-8") as movie_tag_csv:
+    with open("tables/MovieTag.csv", "w", newline="", encoding="utf-8") as movie_tag_csv:
         movie_tag_writer = csv.writer(movie_tag_csv)
         with open("ml-latest-small/tags.csv", encoding="utf-8") as ml_tags_csv:
             ml_tags_reader = csv.reader(ml_tags_csv)
@@ -135,7 +134,7 @@ def create_movie_tag_csv():
 
 async def create_language_csv(session):
     language_isos = set()
-    with open("Language.csv", "w", newline="", encoding="utf-8") as language_csv:
+    with open("tables/Language.csv", "w", newline="", encoding="utf-8") as language_csv:
         language_writer = csv.writer(language_csv)
         languages = await request_tmdb_languages(session)
         for language in languages:
@@ -158,7 +157,7 @@ async def create_translation_csv(session, language_isos):
                 ])
                 existing_translations.add(iso)
 
-    with open("MovieTranslation.csv", "w", newline="", encoding="utf-8") as movie_translation_csv:
+    with open("tables/MovieTranslation.csv", "w", newline="", encoding="utf-8") as movie_translation_csv:
         movie_translation_writer = csv.writer(movie_translation_csv)
         with open("ml-latest-small/movies.csv", encoding="utf-8") as ml_movies_csv:
             ml_movies_reader = csv.reader(ml_movies_csv)
@@ -170,7 +169,7 @@ async def create_translation_csv(session, language_isos):
 def create_rating_csv(movie_ids):
     existing_ratings = set()
 
-    with open("Rating.csv", "w", newline="", encoding="utf-8") as rating_csv:
+    with open("tables/Rating.csv", "w", newline="", encoding="utf-8") as rating_csv:
         rating_writer = csv.writer(rating_csv)
         with open("ml-latest-small/ratings.csv", encoding="utf-8") as ml_ratings_csv:
             ml_ratings_reader = csv.reader(ml_ratings_csv)
@@ -192,7 +191,7 @@ def create_rating_csv(movie_ids):
 def create_personality_data_csv():
     existing_users = set()
 
-    with open("PersonalityData.csv", "w", newline="", encoding="utf-8") as personality_csv:
+    with open("tables/PersonalityData.csv", "w", newline="", encoding="utf-8") as personality_csv:
         personality_writer = csv.writer(personality_csv)
         with open("ml-latest-small/personality-data.csv", encoding="utf-8") as ml_personality_csv:
             ml_personality_reader = csv.reader(ml_personality_csv)
@@ -223,8 +222,8 @@ async def create_publisher_csv(session):
                 publisher_writer.writerow([publisher["id"], publisher["name"], publisher["origin_country"]])
                 existing_publishers.add(publisher["id"])
     
-    with open("Publisher.csv", "w", newline="", encoding="utf-8") as publisher_csv, \
-            open("MoviePublisher.csv", "w", newline="", encoding="utf-8") as movie_publisher_csv:
+    with open("tables/Publisher.csv", "w", newline="", encoding="utf-8") as publisher_csv, \
+            open("tables/MoviePublisher.csv", "w", newline="", encoding="utf-8") as movie_publisher_csv:
         publisher_writer = csv.writer(publisher_csv)
         movie_publisher_wrtier = csv.writer(movie_publisher_csv)
         with open("ml-latest-small/movies.csv", encoding="utf-8") as ml_movies_csv:
@@ -235,7 +234,7 @@ async def create_publisher_csv(session):
 
 
 def create_movie_tmdb_csv():
-    with open("MovieTmdb.csv", "w", newline="", encoding="utf-8") as movie_tmdb_csv:
+    with open("tables/MovieTmdb.csv", "w", newline="", encoding="utf-8") as movie_tmdb_csv:
         movie_tmdb_writer = csv.writer(movie_tmdb_csv)
         with open("ml-latest-small/links.csv", encoding="utf-8") as ml_links_csv:
             ml_links_reader = csv.reader(ml_links_csv)
@@ -283,4 +282,5 @@ async def main():
 if __name__ == "__main__":
     if platform.system() == "Windows":
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+    pathlib.Path("tables").mkdir(exist_ok=True)
     asyncio.run(main())
