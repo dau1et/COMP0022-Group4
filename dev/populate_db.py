@@ -51,7 +51,7 @@ if __name__ == "__main__":
         ("Language", 2), ("Movie", 15), ("MovieTmdb", 2), ("Actor", 3), 
         ("MovieActor", 2), ("MovieGenre", 2), ("Publisher", 3), ("MoviePublisher", 2), 
         ("PersonalityData", 6), ("Rating", 4), ("MovieTranslation", 2),
-        ("PredictedMovieRatings", 2), ("PredictedPersonalityRatings", 6), ("PredictedPersonalityTraits", 6),
+        ("PredictedMovieRating", 2), ("PredictedPersonalityRatings", 6), ("PredictedPersonalityTraits", 6),
         ("Tag", 2), ("TagPersonalities", 6), ("MovieTag", 2)
     ]
 

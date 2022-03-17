@@ -79,7 +79,7 @@ CREATE TABLE movieGenre(
   PRIMARY KEY(movie_id, genre)
 );
 
-CREATE TABLE predictedMovieRatings(
+CREATE TABLE predictedMovieRating(
   movie_id BIGINT REFERENCES movie(movie_id) PRIMARY KEY,
   predicted_rating float8 NOT NULL
 );
@@ -98,7 +98,7 @@ CREATE TABLE predictedPersonalityTraits(
   openness VARCHAR(1),
   agreeableness VARCHAR(1),
   emotional_stability VARCHAR(1),
-  consientiousness VARCHAR(1),
+  conscientiousness VARCHAR(1),
   extraversion VARCHAR(1)
 );
 
