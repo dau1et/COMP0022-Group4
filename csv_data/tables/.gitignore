@@ -1,3 +1,9 @@
 *
 */
 !.gitignore
+!AverageMovieRatings.csv
+!MoviePolarity.csv
+!PredictedMovieRating.csv
+!PredictedPersonalityRatings.csv
+!PredictedPersonalityTraits.csv
+!TagPersonalities.csv
