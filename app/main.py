@@ -95,7 +95,7 @@ async def get_movies(request: Request, runtime_min: int | None = None, runtime_m
 @app.get("/api/movies/{movie_id}")
 async def get_movie(request: Request, movie_id: int):
     async with request.app.state.conn_pool.acquire() as conn:
-        record = await conn.fetchrow("SELECT title, overview, runtime, popularity, adult, status, release_date, budget, revenue, iso639_1, poster_path, backdrop_path FROM Movie WHERE movie_id=$1", movie_id)
+        record = await conn.fetchrow("SELECT title, overview, runtime, average_rating, polarity, popularity, adult, status, release_date, budget, revenue, iso639_1, poster_path, backdrop_path FROM Movie WHERE movie_id=$1", movie_id)
     if record is None:
         raise HTTPException(status_code=404, detail="Item not found")
     return record

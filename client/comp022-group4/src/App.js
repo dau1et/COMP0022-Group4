@@ -1,5 +1,3 @@
-import './styles/App.css';
-
 import Home from './components/Home';
 import Movie from './components/Movie';
 import Library from './components/Library';
@@ -10,6 +8,7 @@ import {
   Routes,
   Redirect
 } from "react-router-dom";
+
 
 const App = () => {
   // return (
@@ -27,6 +26,9 @@ const App = () => {
   // Longest name: 10338
   // Most publishers: 330764
 
+
+
+
   return (
 
     <>
@@ -35,7 +37,6 @@ const App = () => {
             <Route path="/" element={<Home />} />
             <Route path="/movie/:id" element={<Movie />} />
             <Route path="/library" element={<Library />} />
-
 
               {/* <Nav />
               <Overview movieId={66} />

@@ -1,21 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import axios from '../api/axios';
 import requests from '../api/requests';
+import { getMovie } from '../api/fetches';
 import '../styles/Banner.css';
 
 function Banner() {
   const [movie, setMovie] = useState([]);
-
+  const [movieId, setMovieId] = useState(null);
   useEffect(() => {
     async function fetchData() {
-      const request = await axios.get(requests.fetchTopRated);
+      var rand_ids = ["1", "2", "3", "5", "6", "10", "44", "48"]
+      var rand_id =  rand_ids[Math.floor(Math.random() * rand_ids.length)];
+      const request = await getMovie(rand_id);
+      console.log(request.data)
+      setMovieId(rand_id);
       setMovie(
-        request.data.results[
-          Math.floor(Math.random() * request.data.results.length)
-        ]
+        request.data
       );
-      return request;
     }
+    
     fetchData();
   }, []);
 
@@ -30,15 +33,14 @@ function Banner() {
       }}
     >
       <div className='banner_contents'>
-        <h1>The database has fallen</h1>
-        <h1 className='banner_title'>{movie?.title || movie?.name || movie?.original_name}</h1>
+        <h1 className='banner_title'>{movie.title}</h1>
 
         <div className='banner_buttons'>
-          <button className='banner_button'>Play</button>
-          <button className='banner_button'>My List</button>
+          
+          <a className='banner_button' href={`/movie/${movieId}`}>Play</a>
         </div>
 
-        <h1 className='banner_description'>{movie?.overview}</h1>
+        <h1 className='banner_description'>{movie.overview}</h1>
       </div>
 
       <div className='banner-fadeBottom' />

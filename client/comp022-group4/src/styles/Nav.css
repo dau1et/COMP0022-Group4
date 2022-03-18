@@ -2,8 +2,8 @@
   position: fixed;
   top: 0;
   width: 100%;
-  padding: 20px;
-  height: 30px;
+  padding: 12px;
+  height: 72px;
   z-index: 1;
 
   transition-timing-function: ease-in;
@@ -16,9 +16,9 @@
 
 .nav_logo {
   position: fixed;
-  left: 20px;
-  width: 80px;
   object-fit: contain;
+  left: 20px;
+  height: 48px;
 }
 
 .nav_bell {
@@ -29,8 +29,7 @@
 }
 
 
-.library{
-  text-align: right;
+.text{
   display: flex;
-  justify-content: space-between;
+  justify-content: right;
 }

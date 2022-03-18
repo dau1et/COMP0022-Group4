@@ -8,13 +8,13 @@ function Row({ title, movies }) {
   const navigate = useNavigate();
 
   return (
-    <div className='row'>
+    <div className='text-white ml-5'>
       <h2>{title}</h2>
 
       <div className='row_posters'>
         {movies.map((movie) => {
-          if (movie.poster_path !== null){
-            /*return (
+          if (movie.poster_path !== null) {
+            return (
               <img  
                 key={movie.movie_id} 
                 className='object-contain w-full max-h-[200px] rounded m-[5px] hover:scale-105 duration-[450ms]' 
@@ -22,10 +22,11 @@ function Row({ title, movies }) {
                 alt={movie.name} 
                 onClick={() => navigate(`/movie/${movie.movie_id}`, { replace: true })}
               />
-            )*/
+
+            )
 
 
-            return(
+            /*return(
               <div className='image_container'>
                 <div className='after'>2</div>
                 <img 
@@ -35,7 +36,7 @@ function Row({ title, movies }) {
                   onClick={() => navigate(`/movie/${movie.movie_id}`, { replace: true })}
                 />
              </div>
-            )
+            )*/
           }
         })}
       </div>

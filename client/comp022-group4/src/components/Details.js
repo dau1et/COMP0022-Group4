@@ -1,38 +1,59 @@
 import React from 'react';
 
+function Attribute({ name, value }) {
+    return (
+        <>
+            <span className='px-2 font-semibold'>{`${name}: `}</span>
+            <span className='px-2 font-light'>{value}</span>
+        </>
+    );
+}
+
 function Details({ movie }) {
-  console.log(movie);
+    /* We need:
+     *  movie language
+     *  movie translations
+     *  publishing companies
+     *  publishing countries
+     *  cast
+     * 
+     * If the final display looks ugly we can have 'more information' button to open a modal
+     */
 
-  function formatTime(duration) {
-      // 'Minutes' to 'Hours h Minutes m'
-      return Math.floor(duration / 60) + "h " + duration % 60 + "m";
-  }
+    // 'Minutes' to 'Hours h Minutes m'
+    function formatTime(duration) {
+        const hours = Math.floor(duration / 60);
+        var time = hours > 0 ? hours + "h " : '';
+        return time += duration % 60 + "m";
+    }
 
-  function formatCash(amount) {
-      // 'XXXXXXX' to '$X,XXX,XXX'
-      return '$' + amount.toFixed(0).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
-  }
+    // 'XXXXXXX' to '$X,XXX,XXX'
+    function formatCash(amount) {
+        return '$' + amount.toFixed(0).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+    }
 
-  function formatDate(date) {
-      // 'YYYY-MM-DD{T}HH:MM:SS' to 'DD/MM/YYYY'
-      var parts = date.split("T")[0].split('-').reverse();
-      return parts.join('/');
-  }
+    // 'YYYY-MM-DD{T}HH:MM:SS' to 'DD/MM/YYYY'
+    function formatDate(date) {
+        var parts = date.split("T")[0].split('-').reverse();
+        return parts.join('/');
+    }
 
-  return (
-    <div className='columns-3 bg-stone-800 p-6 w-3/4 max-w-[1000px]'>
-        <span className=''>Budget: {formatCash(movie.budget)}</span>
-        <span className=''>Adult: {'\u2717 \u274C'}</span>
-        <span className=''>Release Date: {formatDate(movie.release_date)}</span>
-        <span className=''>Revenue: {formatCash(movie.revenue)}</span>
-        <span className=''>Language: {movie.id}</span>
-        <span className=''>Runtime: {formatTime(movie.runtime)}</span>
-        <span className=''>Translations: {movie.id}</span>
-        <span className=''>Publishing Company: {movie.id}</span>
-        <span className=''>Publishing Country: {movie.id}</span>
-        <span className=''>Cast: {movie.id}</span>
-    </div>
-  )
+    return (
+        <div className='grid grid-cols-3 gap-x-2 gap-y-1 bg-stone-800 px-4 py-3 w-full'>
+            <div className='flex flex-column justify-between'><Attribute name="Budget"        value={formatCash(movie.budget)}       /></div>
+            <div className='flex flex-column justify-between'><Attribute name="Adult"         value={'\u274C'}                       /></div>
+            <div className='flex flex-column justify-between'><Attribute name="Release Date"  value={formatDate(movie.release_date)} /></div>
+        
+            <div className='flex flex-column justify-between'><Attribute name="Revenue"       value={formatCash(movie.revenue)}      /></div>
+            <div className='flex flex-column justify-between'><Attribute name="Language"      value={"English"}                      /></div>
+            <div className='flex flex-column justify-between'><Attribute name="Runtime"       value={formatTime(movie.runtime)}      /></div>
+        
+            <div className='col-span-3'><Attribute name="Translations"          value={movie.title}/></div>
+            <div className='col-span-3'><Attribute name="Publishing Companies"  value={movie.title}/></div>
+            <div className='col-span-3'><Attribute name="Publishing Countries"  value={movie.title}/></div>
+            <div className='col-span-3'><Attribute name="Cast"                  value={movie.title}/></div>
+        </div>
+    )
 }
 
 export default Details;

@@ -1,8 +1,3 @@
-.row {
-  color: white;
-  margin-left: 20px;
-}
-
 .row_posters {
   display: flex;
   overflow-y: hidden;
@@ -22,6 +17,12 @@
 
 .image_container {
   position: relative;
+
+  object-fit: contain;
+  max-height: 200px;
+  border-radius: 5px;
+  margin: 5px;
+  transition: transform 450ms;
 }
 
 .image_container .after {
@@ -34,7 +35,13 @@
   color: #FFF;
 }
 
-.image_container:hover .after {
+.image_container:hover {
   display: block;
+  border: 0;
   background: rgba(0, 0, 0, .6);
+  transform: scale(1.5);
+}
+
+.image_container:hover after {
+  display: block;
 }

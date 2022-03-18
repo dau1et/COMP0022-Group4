@@ -3,9 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Nav from './Nav';
 import Banner from './Banner';
 import Row from './Row';
-import requests from '../api/requests';
 import { getMoviesByGenre, getTopMoviesBy } from '../api/fetches';
-import axios from 'axios';
 
 import RingLoader from 'react-spinners/RingLoader';
 
@@ -20,7 +18,7 @@ const Home = () => {
     const [dramaMovies, setDramaMovies] = useState();
     const [romanceMovies, setRomanceMovies] = useState();
     const [mysteryMovies, setMysteryMovies] = useState();
-    
+
     useEffect(() => {
         // fetch data per genre, pass into respective row
         async function fetchData() {
@@ -44,23 +42,26 @@ const Home = () => {
         }
         fetchData();
     }, []);
+
+    const spinnerStyle = {
+        position: "fixed",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)"
+    }
     
     if (isLoading) {
-        const divStyle = {
-            position: "fixed",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)"
-        }
         return (
-            <div style={divStyle}>
+            <div style={spinnerStyle}>
                 <RingLoader color="#0000ff" loading={isLoading}/>
             </div>
         )
-    }  
+    }
+
+    console.log(isLoading);
     
     return (
-        <div className="app">
+        <div>
             <Nav />
             <Banner />
         

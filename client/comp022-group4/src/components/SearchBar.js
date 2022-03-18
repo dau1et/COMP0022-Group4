@@ -1,18 +1,8 @@
 import React, {useState, useEffect} from "react";
-import { getMovies } from '../api/fetches';
 
 
-const SearchBar = () => {
-	// const [searchTerm, searchTermField] = useInput({ placeholder: "Search by Movie Name" });
+const SearchBar = ({ allMovies, searchResults, setSearchResults }) => {
 	const [value, setValue] = useState("");
-	const [searchResults, setSearchResults] = useState([]);
-	const [allMovies, setAllMovies] = useState({});
-
-	useEffect(async () => {
-		const movies = await getMovies();
-		console.log(movies);
-		setAllMovies(movies);
-	}, [])	
 
 	useEffect(() => {
 		if (allMovies.data) {
@@ -24,26 +14,16 @@ const SearchBar = () => {
 	}, [value])
 
 	return (
-		<div className="mt-10">
-			<form>
+		<div className="pt-2 relative mx-auto text-gray-600 inline-block mt-20 justify-center align-middle">
 			<input
 				type="search"
 				value={value}
 				onChange={e => setValue(e.target.value)}
-				name="s"
-				id="s"
+				name="search"
 				placeholder="Search"
+				className="border-2 border-gray-300 bg-white h-10 px-5 pr-16 rounded-lg text-sm focus:outline-none"
 			/>
-			</form>
 
-			{/* <ul>
-				<li>
-
-					<a>
-						<h3>{searchResults.title}</h3>
-					</a>
-				</li>
-			</ul> */}
 		</div>
 	)
 }
