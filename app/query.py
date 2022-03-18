@@ -9,6 +9,7 @@ class QueryBuilder:
         self._clauses = [f"SELECT {', '.join(columns)} FROM {table}"]
         self._filters = []
         self._order_by = None
+        self._limit = None
 
         self._args = []
         self._arg_num = 1
@@ -43,11 +44,16 @@ class QueryBuilder:
         self._arg_num += len(values)
     
     def add_order_by(self, field: str, direction: SortDirection) -> None:
-        self._order_by = f"ORDER BY {field} {direction}"
+        self._order_by = f"ORDER BY {field} {direction} NULLS LAST"
+    
+    def add_limit(self, limit: int) -> None:
+        self._limit = f"LIMIT {limit}"
     
     def build(self) -> tuple[str, list[Any]]:
         if self._filters:
             self._clauses.append("WHERE " + " AND ".join(self._filters))
         if self._order_by is not None:
             self._clauses.append(self._order_by)
+        if self._limit is not None:
+            self._clauses.append(self._limit)
         return " ".join(self._clauses), self._args

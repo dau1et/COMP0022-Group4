@@ -1,34 +1,52 @@
 import './styles/App.css';
-import Nav from './components/Nav';
-import Banner from './components/Banner';
-import Row from './components/Row';
-import requests from './api/requests';
 
-import Overview from './components/Overview';
-import Reports from './components/Reports';
+import Home from './components/Home';
+import Movie from './components/Movie';
+import Library from './components/Library';
 
-function App() {
-  /*return (
-    <div className="app">
-      <Nav />
-      <Banner />
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Redirect
+} from "react-router-dom";
 
-      <Row title="Most Popular" fetchUrl={requests.fetchTopRated} />
-      <Row title="Most Polarising" fetchUrl={requests.fetchTrending} />
-      <Row title="..." fetchUrl={requests.fetchTrending} />
-      <Row title="..." fetchUrl={requests.fetchTrending} />
-    </div>
-  );*/
+const App = () => {
+  // return (
+  //   <div className="app">
+  //     <Nav />
+  //     <Banner />
+
+  //     <Row title="Most Popular" fetchUrl={requests.fetchTopRated} />
+  //     <Row title="Most Polarising" fetchUrl={requests.fetchTrending} />
+  //     <Row title="..." fetchUrl={requests.fetchTrending} />
+  //     <Row title="..." fetchUrl={requests.fetchTrending} />
+  //   </div>
+  // );
 
   // Longest name: 10338
+  // Most publishers: 330764
 
   return (
-    <div className="app">
-      <Nav />
 
-      <Overview movieId={634649} />
-      <Reports movieId={634649} />
-    </div>
+    <>
+      <Router>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/movie/:id" element={<Movie />} />
+            <Route path="/library" element={<Library />} />
+
+
+              {/* <Nav />
+              <Overview movieId={66} />
+              <Reports movieId={634649} /> */}
+
+          </Routes>
+
+      </Router>
+
+    </>
+
   )
 }
 

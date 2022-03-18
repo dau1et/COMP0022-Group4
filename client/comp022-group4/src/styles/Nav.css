@@ -27,3 +27,10 @@
   width: 30px;
   object-fit: contain;
 }
+
+
+.library{
+  text-align: right;
+  display: flex;
+  justify-content: space-between;
+}

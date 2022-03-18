@@ -1,65 +1,71 @@
 import React, { useEffect, useState } from 'react';
 import axios from '../api/axios';
+import { getMovie, getMovieGenres } from '../api/fetches';
 import { API_KEY } from '../api/requests';
 import '../styles/Overview.css';
-import logo from '../assets/tmdb.svg';
+import Details from './Details';
+import { image_url, tmdb } from '../constants';
 
-const image_url = "https://image.tmdb.org/t/p/original";
 
 function Overview({ movieId }) {
   const [movie, setMovie] = useState();
+  const [genres, setGenres] = useState();
 
-  useEffect(() => {
-    async function fetchData() {
-      const request = await axios.get(`/movie/${movieId}?api_key=${API_KEY}&language=en-US`);
-      setMovie(request.data);
-      return request;
-    }
-    fetchData();
+  useEffect(async () => {
+    const movieRequest = await getMovie(movieId);
+    setMovie(movieRequest.data);
+
+    const genresRequest = await getMovieGenres(movieId);
+    setGenres(genresRequest.data);
   }, [movieId]);
 
-  console.log(movie);
-  if (movie === undefined) return(<div />);
+
+  if (movie === undefined || genres === undefined) return(
+    <div className='text-white'>
+      MOVIE NOT FOUND
+    </div>
+  );
+
+  const sectionHeight = "600";
   
   return (
-    <div className='flex justify-between p-40'>
+    <div className='flex p-40'>
 
         <img 
-            className='object-contain mr-16 max-h-[600px]' 
+            className={`object-contain mr-16 max-h-[${sectionHeight}px]`} 
             src={`${image_url}${movie.poster_path}`} 
             alt={movie.name} 
         />
 
-        <div className='flex flex-col h-auto max-h-[600px]'>
+        <div className={`flex flex-col h-auto max-h-[${sectionHeight}px]`}>
             <h1 className='uppercase text-6xl h-20 font-semibold'>{movie.title}</h1>
 
             <div className='flex flex-grow flex-col justify-between ml-4'>
 
-              <div className='overview_main'>
+              <div>
                 <div className='flex justify-start mb-2 h-10'>
-                  {movie.genres.map(genre => (
-                    <div key={genre.id} className='genre_tag'>
-                        {genre.name}
+                  {genres.map((genre, index) => (
+                    <div key={index} className='genre_tag'>
+                        {genre.genre}
                     </div>
                   ))}
                 </div>
                 
-                <div className='tmdb_rating'>
+                <div className='m-6 mt-8'>
                   <img 
-                      className='tmdb_logo' 
-                      src={logo} 
+                      className='object-contain w-16' 
+                      src={tmdb} 
                       alt="TMDB"
                   />
+                  {movie.vote_average} / {movie.vote_count}
                 </div>
                 
 
-                <h2>Overview</h2>
-                <h3>{movie.overview}</h3>
+                <h2 className='text-xl font-bold mb-3'>Overview</h2>
+                <h3 className='font-medium max-w-[95%]'>{movie.overview}</h3>
               </div>
-              
-              <div className='overview_box'>
-                DETAILS
-              </div>
+
+              <Details movie={movie} />
             </div>
 
         </div>

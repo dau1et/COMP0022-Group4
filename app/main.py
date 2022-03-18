@@ -3,27 +3,45 @@ from typing import Literal
 
 import asyncpg
 from fastapi import FastAPI, HTTPException, Query, Request
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.query import QueryBuilder
 
 app = FastAPI()
 
+origins = [
+    "http://localhost:3000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 SortDirection = Literal["ASC", "DESC"]
 
 SortFields = Literal[
     "title",
-    "release_date",
-    "popularity",
     "runtime",
-    "revenue",
-    "budget"
+    "average_rating",
+    "popularity",
+    "polarity",
+    "release_date",
+    "budget",
+    "revenue"
 ]
 
 MOVIE_COLUMNS = [
+    "movie_id",
     "title",
     "overview",
     "runtime",
+    "average_rating",
     "popularity",
+    "polarity",
     "adult",
     "status",
     "release_date",
@@ -51,16 +69,12 @@ async def shutdown():
     await app.state.conn_pool.close()
 
 
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
-
-
 @app.get("/api/movies")
 async def get_movies(request: Request, runtime_min: int | None = None, runtime_max: int | None = None, 
                         revenue_min: float | None = None, revenue_max: float | None = None,
                         genres: list[str] | None = Query(None), language: str | None = None,
-                        sort_by: SortFields = "title", sort_direction: SortDirection = "ASC"):
+                        sort_by: SortFields = "title", sort_direction: SortDirection = "ASC",
+                        limit: int | None = None):
     query_builder = QueryBuilder(MOVIE_COLUMNS, "Movie", "movie_id")
     query_builder.add_range_filter("runtime", runtime_min, runtime_max)
     query_builder.add_range_filter("revenue", revenue_min, revenue_max)
@@ -69,6 +83,8 @@ async def get_movies(request: Request, runtime_min: int | None = None, runtime_m
     if genres is not None:
         query_builder.add_membership_filter("genre", genres, from_table="MovieGenre")
     query_builder.add_order_by(sort_by, sort_direction)
+    if limit is not None:
+        query_builder.add_limit(limit)
     query, args = query_builder.build()
 
     async with request.app.state.conn_pool.acquire() as conn:
