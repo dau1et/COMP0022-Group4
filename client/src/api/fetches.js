@@ -10,6 +10,35 @@ export async function getMovieGenres(movieId) {
     return axios.get(`${baseURL}/movies/${movieId}/genres`);
 }
 
+export async function getMovieLanguage(movieId) {
+    return axios.get(`${baseURL}/movies/${movieId}/language`);
+}
+
+export async function getMovieTranslations(movieId) {
+    return axios.get(`${baseURL}/movies/${movieId}/translations`);
+}
+
+export async function getMoviePublishers(movieId) {
+    return axios.get(`${baseURL}/movies/${movieId}/publishers`);
+}
+
+export async function getMovieActors(movieId) {
+    return axios.get(`${baseURL}/movies/${movieId}/actors`);
+}
+
+
+export async function getPredictedRating(movieId) {
+    return axios.get(`${baseURL}/movies/${movieId}/pred_rating`);
+}
+
+export async function getPredictedPersonalityRatings(movieId) {
+    return axios.get(`${baseURL}/movies/${movieId}/pred_personality_ratings`);
+}
+
+export async function getPredictedPersonalityTraits(movieId) {
+    return axios.get(`${baseURL}/movies/${movieId}/pred_personality_traits`);
+}
+
 export async function getMovies(limit) {
     let requestUrl = `${baseURL}/movies`;
     if (limit !== undefined) {
@@ -34,6 +63,17 @@ export async function getMoviesByGenre(genre, limit) {
     return axios.get(requestUrl);
 }
 
+export async function getMovieTags(movieId) {
+    return axios.get(`${baseURL}/movies/${movieId}/tags`);
+}
+
+export async function getTagPersonalityData(tagId, limit) {
+    let requestUrl = `${baseURL}/tags/${tagId}/personality_data`;
+    if (limit !== undefined) {
+        requestUrl = requestUrl.concat(`&limit=${limit}`);
+    }
+    return axios.get(requestUrl);
+}
 
 
 

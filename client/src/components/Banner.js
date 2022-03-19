@@ -4,7 +4,7 @@ import requests from '../api/requests';
 import { getMovie } from '../api/fetches';
 import '../styles/Banner.css';
 
-function Banner() {
+function Banner({ setIsLoaded }) {
   const [movie, setMovie] = useState([]);
   const [movieId, setMovieId] = useState(null);
   useEffect(() => {
@@ -18,8 +18,11 @@ function Banner() {
         request.data
       );
     }
-    
     fetchData();
+
+    let bannerImg = new Image();
+    bannerImg.onload = () => {setIsLoaded(true)};
+    bannerImg.src = "https://www.ucl.ac.uk/news/sites/news/files/ucl_quad57-800x500_0.jpg";
   }, []);
 
   return (

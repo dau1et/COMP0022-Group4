@@ -3,7 +3,7 @@ import '../styles/Nav.css';
 import logo from '../assets/ucldb.png';
 import { useNavigate } from 'react-router-dom';
 
-function Nav({allMovies}) {
+function Nav() {
     const navigate = useNavigate();
     const [show, handleShow] = useState(false);
 

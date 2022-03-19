@@ -23,7 +23,7 @@ const App = () => {
   //   </div>
   // );
 
-  // Longest name: 10338
+  // Longest name: 95165
   // Most publishers: 330764
 
 

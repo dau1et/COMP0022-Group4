@@ -101,6 +101,13 @@ async def get_movie(request: Request, movie_id: int):
     return record
 
 
+@app.get("/api/movies/{movie_id}/language")
+async def get_movie_language(request: Request, movie_id: int):
+    async with request.app.state.conn_pool.acquire() as conn:
+        records = await conn.fetchrow("SELECT Language.iso639_1, Language.language_name FROM Language, Movie WHERE Movie.iso639_1=Language.iso639_1 AND Movie.movie_id=$1", movie_id)
+    return records
+
+
 @app.get("/api/movies/{movie_id}/actors")
 async def get_movie_actors(request: Request, movie_id: int):
     async with request.app.state.conn_pool.acquire() as conn:
@@ -125,7 +132,7 @@ async def get_movie_genres(request: Request, movie_id: int):
 @app.get("/api/movies/{movie_id}/tags")
 async def get_movie_tags(request: Request, movie_id: int):
     async with request.app.state.conn_pool.acquire() as conn:
-        records = await conn.fetch("SELECT Tag.tag FROM Tag INNER JOIN MovieTag ON Tag.tag_id = MovieTag.tag_id AND MovieTag.movie_id=$1", movie_id)
+        records = await conn.fetch("SELECT Tag.tag_id, Tag.tag FROM Tag INNER JOIN MovieTag ON Tag.tag_id = MovieTag.tag_id AND MovieTag.movie_id=$1", movie_id)
     return records
 
 
@@ -148,7 +155,7 @@ async def get_pred_movie_rating(request: Request, movie_id: int):
     async with request.app.state.conn_pool.acquire() as conn:
         record = await conn.fetchrow("SELECT predicted_rating FROM PredictedMovieRating WHERE movie_id=$1", movie_id)
     if record is None:
-        raise HTTPException(status_code=404, detail="Item not found")
+        return {"predicted_rating": None}
     return record
 
 
@@ -157,7 +164,7 @@ async def get_pred_personality_ratings(request: Request, movie_id: int):
     async with request.app.state.conn_pool.acquire() as conn:
         record = await conn.fetchrow("SELECT pred_open, pred_agreeable, pred_emotionally_stable, pred_conscientious, pred_extrovert FROM PredictedPersonalityRatings WHERE movie_id=$1", movie_id)
     if record is None:
-        raise HTTPException(status_code=404, detail="Item not found")
+        return {"pred_open": None, "pred_agreeable": None, "pred_emotionally_stable": None, "pred_conscientious": None, "pred_extrovert": None}
     return record
 
 
@@ -166,7 +173,7 @@ async def get_pred_personality_traits(request: Request, movie_id: int):
     async with request.app.state.conn_pool.acquire() as conn:
         record = await conn.fetchrow("SELECT openness, agreeableness, emotional_stability, conscientiousness, extraversion FROM PredictedPersonalityTraits WHERE movie_id=$1", movie_id)
     if record is None:
-        raise HTTPException(status_code=404, detail="Item not found")
+        return {"openness": None, "agreeableness": None, "emotional_stability": None, "conscientiousness": None, "extraversion": None}
     return record
 
 
