@@ -18,14 +18,14 @@ function Overview({ movie, genres, language, translations, publishers, cast }) {
   function headerFontSize(text) {
     console.log(text.length);
     if (Math.floor(text.length / 36) < 1)
-      return 6;
+      return 'text-6xl';
     if (Math.floor(text.length / 45) < 1)
-      return 5;
+      return 'text-5xl';
     if (Math.floor(text.length / 59) < 1)
-      return 4;
+      return 'text-4xl';
     if (Math.floor(text.length / 80) < 1)
-      return 3;
-    return 2;
+      return 'text-3xl';
+    return 'text-2xl';
   }
   
   return (
@@ -38,7 +38,7 @@ function Overview({ movie, genres, language, translations, publishers, cast }) {
         />
 
         <div className="flex flex-col h-auto max-h-[600px]">
-            <h1 className={`uppercase h-[72px] font-semibold text-${headerFontSize(movie.title)}xl`}>{movie.title}</h1>
+            <h1 className={`uppercase h-[72px] font-semibold ${headerFontSize(movie.title)}`}>{movie.title}</h1>
 
             <div className='flex flex-grow flex-col justify-between'>
 
@@ -51,7 +51,7 @@ function Overview({ movie, genres, language, translations, publishers, cast }) {
                   ))}
                 </div>
                 
-                <div className='flex flex-column h-10 m-6'>
+                <div className='flex flex-column h-10 m-6 mb-5'>
                   <img 
                       className='object-contain w-14 mr-5' 
                       src={tmdb} 

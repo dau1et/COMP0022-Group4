@@ -9,65 +9,19 @@ import parse from 'html-react-parser'
 import { Grid } from '@mui/material';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Pie } from 'react-chartjs-2';
+import { rotten, metacritic, imdb } from '../constants';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
-
-const pieData = {
-  labels: ['Agreeableness', 'Conscientiousness', 'Emotional Stability', 'Extraversion', 'Openness'],
-  datasets: [
-    {
-      data: [1, 2, 3, 4, 5],
-      backgroundColor: [
-        'rgba(255, 99, 132, 0.2)',
-        'rgba(54, 162, 235, 0.2)',
-        'rgba(255, 206, 86, 0.2)',
-        'rgba(75, 192, 192, 0.2)',
-        'rgba(153, 102, 255, 0.2)'
-      ],
-      borderColor: [
-        'rgba(255, 99, 132, 1)',
-        'rgba(54, 162, 235, 1)',
-        'rgba(255, 206, 86, 1)',
-        'rgba(75, 192, 192, 1)',
-        'rgba(153, 102, 255, 1)'
-      ],
-      borderWidth: 1,
-    },
-  ]}
-
-  // const data = {
-  //   labels: ['Agreeableness', 'Conscientiousness', 'Emotional Stability', 'Extraversion', 'Openness'],
-  //   datasets: [
-  //     {
-  //       data: Object.values((Object.values(tPersonalities[0]))[0]),
-  //       backgroundColor: [
-  //         'rgba(255, 99, 132, 0.2)',
-  //         'rgba(54, 162, 235, 0.2)',
-  //         'rgba(255, 206, 86, 0.2)',
-  //         'rgba(75, 192, 192, 0.2)',
-  //         'rgba(153, 102, 255, 0.2)'
-  //       ],
-  //       borderColor: [
-  //         'rgba(255, 99, 132, 1)',
-  //         'rgba(54, 162, 235, 1)',
-  //         'rgba(255, 206, 86, 1)',
-  //         'rgba(75, 192, 192, 1)',
-  //         'rgba(153, 102, 255, 1)'
-  //       ],
-  //       borderWidth: 1,
-  //     },
-  //   ]}
 
 export const options = {
   maintainAspectRatio: false,
   
   responsive:false,
-  hover: {mode: null},
   text: 'Test',
 };
 
 
-export default function Report({ movie, predictedRating, predictedPersonalityRatings, predictedPersonalityTraits, tags, tagPersonalities }) {
+export default function Report({ movie, predictedRating, predictedPersonalityRatings, predictedPersonalityTraits, tags, tagPersonalities, totalTagValues, prevalentTags }) {
   var pred_arr = []
   for (var pred in predictedPersonalityRatings){
     pred_arr.push(predictedPersonalityRatings[pred]);
@@ -117,12 +71,53 @@ export default function Report({ movie, predictedRating, predictedPersonalityRat
         </AccordionSummary>
         <AccordionDetails style={{backgroundColor: '#111111', color: '#ffffff', padding: '20px'}}>
           <Typography variant="h5" align="center">
-            Individual Tag Personalities
+            
           </Typography>
+          <Grid  container alignItems='center' justifyContent='center' className="flex text-center">
+            <div className = 'flex justify-center'>
+            {movie.imdb_score && (<Grid item>
+              <div>
+              <img 
+                        className='object-contain w-14 mx-10' 
+                        src={imdb} 
+                        alt="imdb"
+                    />
+              <div>{movie.imdb_score}</div>
+              </div>
+              </Grid>)}
+              {movie.rotten_score && (<Grid item>
+              <div>
+              <img 
+                        className='object-contain w-14 mx-10' 
+                        src={rotten} 
+                        alt="rotten"
+                    />
+              <div>{movie.rotten_score}</div>
+              </div>
+              </Grid>)}
+              {movie.metacritic_score && (<Grid item>
+              <div className = "text-center">
+              <img 
+                        className='object-contain w-14 mx-10' 
+                        src={metacritic} 
+                        alt="metacritic"
+                    />
+              <div>{movie.metacritic_score}</div>
+              </div>
+              </Grid>)}
+            </div>
+            </Grid>
+            <div className = "text-center font-bold mt-5">
+              Awards and Nominations
+            </div>
 
-          <div>
-            {movie.awards}
-          </div>
+            {movie.awards ? <div className = "text-center font-light">
+              {movie.awards}
+            </div> :
+            <div className = "text-center font-light">
+              This movie received no awards or nominations
+            </div>}
+         
         </AccordionDetails>
       </Accordion>
 
@@ -166,8 +161,8 @@ export default function Report({ movie, predictedRating, predictedPersonalityRat
         <br/>
         <div>
           <Typography align='center' sx={{ px:"30%" }}>
-            *Methodology: e.g We sourced additional data from the MovieLens group to attain the personality 
-            values for a user. To obtain our prediction, we took 20% of all users who rated the movie and passed
+            *Methodology: We sourced additional data from the MovieLens group to attain the personality 
+            values for a user. To obtain our prediction, we took 20% (80/20 test-train split) of all users who rated the movie and passed
             their personality data into a KNeighborsRegressor regression model. We conducted some preprocessing
             in the form of scaling to normalise the data.
           </Typography>
@@ -182,7 +177,7 @@ export default function Report({ movie, predictedRating, predictedPersonalityRat
           id="panel2a-header"
           style={{backgroundColor: '#003080', color: '#ffffff'}}
         >
-          <Typography>Prediction of Traits of who will give a High Rating</Typography>
+          <Typography>Prediction of Traits of Who Will Give a High Rating</Typography>
         </AccordionSummary>
         <AccordionDetails style={{backgroundColor: '#111111', color: '#ffffff', padding: '20px'}}>
           <div className="text-right">
@@ -281,33 +276,70 @@ export default function Report({ movie, predictedRating, predictedPersonalityRat
           <Typography>Prediction of Traits Based on Tags</Typography>
         </AccordionSummary>
         <AccordionDetails style={{backgroundColor: '#111111', color: '#ffffff', padding: '20px'}}>
-          <Typography variant="h5" align="center">
-            Individual Tag Personalities
-          </Typography>
-          <br/>
-          <br/>
 
-          <div className = "flex justify-center">
+          <div className="mt-5 mb-20">
+      
+      <Typography variant="h5" align="center" sx={{ fontWeight: 'bold' }}>
+        Overall Tag Personalities
+      </Typography>
+      
+      <div className = "flex justify-center mb-10">
+  
+      <Pie data={{
+      labels: ['Openness', 'Agreeableness', 'Conscientiousness', 'Emotional Stability', 'Extraversion'],
+      datasets: [
+        {
+          data: totalTagValues,
+          backgroundColor: [
+            'rgba(255, 99, 132, 1)',
+            'rgba(54, 162, 235, 1)',
+            'rgba(255, 206, 86, 1)',
+            'rgba(75, 192, 192, 1)',
+            'rgba(153, 102, 255, 1)'
+          ],
+          borderColor: [
+            'rgba(255, 99, 132, 1)',
+            'rgba(54, 162, 235, 1)',
+            'rgba(255, 206, 86, 1)',
+            'rgba(75, 192, 192, 1)',
+            'rgba(153, 102, 255, 1)'
+          ],
+          borderWidth: 1,
+        },
+      ]}} width={400} height={400} options={options}/> 
+      </div>
+      <div className="text-center">
+        <span className="font-bold">Predicted Tag-based Personality Traits:</span> {prevalentTags.map((tag, index) => (index == (prevalentTags.length - 1))? (<span className = "font-extralight">{tag}</span>):(<span className = "font-extralight">{tag}, </span>))}
+      </div>
+      <div className="text-center font-thin" >*The traits describe someone’s liking of the film based off the personalities around a tag</div>
+      </div>
+
+      <Typography variant="h5" align="center" sx={{ fontWeight: 'bold' }}>
+            Individual Tag Personalities
+      </Typography>
+          <div className = "flex justify-center ">
+
+          <Grid container spacing={2} className = "flex justify-center">
 
             {tagPersonalities.map((tagPersonality, index) => 
-            <div >
-              <Typography variant="h6" align="center">
-            Tag: {Object.keys(tagPersonality)}
+                <Grid item xs={3}>
+                <br/>
+                <br/>
+                <br/>
+            <Typography variant="h5" className = "flex justify-center w-[400px]">
+            Tag:  {Object.keys(tagPersonality)}
             </Typography>
-            
-            <br/>
-            
             <Pie key = {index} data={{
     labels: ['Openness', 'Agreeableness', 'Conscientiousness', 'Emotional Stability', 'Extraversion'],
     datasets: [
       {
         data: Object.values((Object.values(tagPersonality))[0]),
         backgroundColor: [
-          'rgba(255, 99, 132, 0.2)',
-          'rgba(54, 162, 235, 0.2)',
-          'rgba(255, 206, 86, 0.2)',
-          'rgba(75, 192, 192, 0.2)',
-          'rgba(153, 102, 255, 0.2)'
+          'rgba(255, 99, 132, 0.5)',
+          'rgba(54, 162, 235, 0.5)',
+          'rgba(255, 206, 86, 0.5)',
+          'rgba(75, 192, 192, 0.5)',
+          'rgba(153, 102, 255, 0.5)'
         ],
         borderColor: [
           'rgba(255, 99, 132, 1)',
@@ -319,10 +351,12 @@ export default function Report({ movie, predictedRating, predictedPersonalityRat
         borderWidth: 1,
       },
     ]}} width={400} height={400} options={options}/> 
-    </div>
+  </Grid>
     )}
-            
-          </div>
+    </Grid>
+    </div>
+
+    
         </AccordionDetails>
       </Accordion>) : null}
     </div>

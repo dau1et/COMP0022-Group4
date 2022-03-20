@@ -14,8 +14,11 @@ class QueryBuilder:
         self._args = []
         self._arg_num = 1
     
-    def add_equality_filter(self, field_name: str, value: Any) -> None:
-        self._filters.append(f"{field_name} = ${self._arg_num}")
+    def add_equality_filter(self, field_name: str, value: Any, from_table: str | None = None) -> None:
+        if from_table is None:
+            self._filters.append(f"{field_name} = ${self._arg_num}")
+        else:
+            self._filters.append(f"{self._id_field} IN (SELECT {self._id_field} FROM {from_table} WHERE {field_name} = ${self._arg_num})")
         self._args.append(value)
         self._arg_num += 1
     
@@ -48,6 +51,10 @@ class QueryBuilder:
     
     def add_limit(self, limit: int) -> None:
         self._limit = f"LIMIT {limit}"
+
+    def add_row_bounds(self, row_min: int, row_max: int) -> None:
+        if row_min is not None and row_max is not None:
+            self._limit = f"LIMIT {row_max - row_min} OFFSET {row_min}"
     
     def build(self) -> tuple[str, list[Any]]:
         if self._filters:

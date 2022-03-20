@@ -1,4 +1,4 @@
-from pickletools import read_uint1
+import datetime
 from typing import Literal
 
 import asyncpg
@@ -57,24 +57,24 @@ MOVIE_COLUMNS = [
 ]
 
 MOVIE_GENRES = [
-    "Drama"
-    "IMAX"
-    "Film-Noir"
-    "Action"
-    "Children"
-    "Adventure"
-    "Sci-Fi"
-    "Documentary"
-    "Western"
-    "Crime"
-    "Comedy"
-    "Thriller"
-    "Musical"
-    "Animation"
-    "War"
-    "Mystery"
-    "Fantasy"
-    "Horror"
+    "Drama",
+    "IMAX",
+    "Film-Noir",
+    "Action",
+    "Children",
+    "Adventure",
+    "Sci-Fi",
+    "Documentary",
+    "Western",
+    "Crime",
+    "Comedy",
+    "Thriller",
+    "Musical",
+    "Animation",
+    "War",
+    "Mystery",
+    "Fantasy",
+    "Horror",
     "Romance"
 ]
 
@@ -98,16 +98,22 @@ async def shutdown():
 @app.get("/api/movies")
 async def get_movies(request: Request, runtime_min: int | None = None, runtime_max: int | None = None, 
                         revenue_min: float | None = None, revenue_max: float | None = None,
+                        release_date_min: datetime.date | None = None, release_date_max: datetime.date | None = None,
                         genres: list[str] | None = Query(None), language: str | None = None,
                         sort_by: SortFields = "title", sort_direction: SortDirection = "ASC",
-                        limit: int | None = None):
+                        limit: int | None = None, row_min: int | None = None, row_max: int | None = None):
     query_builder = QueryBuilder(MOVIE_COLUMNS, "Movie", "movie_id")
     query_builder.add_range_filter("runtime", runtime_min, runtime_max)
     query_builder.add_range_filter("revenue", revenue_min, revenue_max)
+    query_builder.add_range_filter("release_date", release_date_min, release_date_max)
+    query_builder.add_row_bounds(row_min, row_max)
     if language is not None:
         query_builder.add_equality_filter("iso639_1", language)
+    # if genres is not None:
+    #     query_builder.add_membership_filter("genre", genres, from_table="MovieGenre")
     if genres is not None:
-        query_builder.add_membership_filter("genre", genres, from_table="MovieGenre")
+        for genre in genres:
+            query_builder.add_equality_filter("genre", genre, from_table="MovieGenre")
     query_builder.add_order_by(sort_by, sort_direction)
     if limit is not None:
         query_builder.add_limit(limit)
@@ -215,3 +221,10 @@ async def get_tag_personality_data(request: Request, tag_id: int):
 @app.get("/api/genres")
 def get_tag_personality_data():
     return MOVIE_GENRES
+
+
+@app.get("/api/languages")
+async def get_all_languages(request: Request):
+    async with request.app.state.conn_pool.acquire() as conn:
+        records = await conn.fetch("SELECT Language.iso639_1, Language.language_name FROM Language;")
+    return records

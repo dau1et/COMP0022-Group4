@@ -5,12 +5,9 @@ const SearchBar = ({ allMovies, setSearchResults }) => {
 	const [value, setValue] = useState("");
 
 	useEffect(() => {
-		console.log(value);
-		console.log(allMovies);
 		const result = allMovies.filter(movie => movie.title.toLowerCase().includes(value.toLowerCase()));
-		console.log(result);
 		setSearchResults(result);
-	}, [value])
+	}, [allMovies, value])
 
 	return (
 		<div className="mx-auto text-gray-600 bg-stone-800">
@@ -20,9 +17,8 @@ const SearchBar = ({ allMovies, setSearchResults }) => {
 				onChange={e => setValue(e.target.value)}
 				name="search"
 				placeholder="Search"
-				className="border-2 border-gray-300 bg-white h-10 px-5 pr-16 rounded-lg text-sm focus:outline-none"
+				className="border-2 border-gray-300 bg-white h-10 px-5 pr-5 rounded-lg text-sm focus:outline-none"
 			/>
-
 		</div>
 	)
 }

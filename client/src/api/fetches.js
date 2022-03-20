@@ -39,10 +39,19 @@ export async function getPredictedPersonalityTraits(movieId) {
     return axios.get(`${baseURL}/movies/${movieId}/pred_personality_traits`);
 }
 
-export async function getMovies(limit) {
+export async function getMovies({genres=[], params={}}={}) {
     let requestUrl = `${baseURL}/movies`;
-    if (limit !== undefined) {
-        requestUrl = requestUrl.concat(`?limit=${limit}`);
+    let query_params = [];
+    genres.forEach(genre => {
+        query_params.push(`genres=${genre}`)
+    })
+    for (const [key, value] of Object.entries(params)) {
+        if (value !== null) {
+            query_params.push(`${key}=${value}`)
+        }
+    }
+    if (query_params.length > 0) {
+        requestUrl = requestUrl.concat('?' + query_params.join('&'));
     }
     return axios.get(requestUrl);
 }
@@ -79,6 +88,9 @@ export async function getTagPersonalityData(tagId, limit) {
     return axios.get(requestUrl);
 }
 
+export async function getAllLanguages() {
+    return axios.get(`${baseURL}/languages`);
+}
 
 
 

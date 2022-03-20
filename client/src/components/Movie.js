@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import RingLoader from 'react-spinners/RingLoader';
 
@@ -25,6 +26,8 @@ const Movie = () => {
   const [movieTags, setMovieTags] = useState([]);
   const [tagPersonalities, setTagPersonalities] = useState([]);
   const [tags, setTags] = useState([]);
+  const [totalTagValues, setTotalTagValues] = useState([]);
+  const [prevalentTags, setPrevalentTags] = useState([]);
 
   let tTags = [];
   let tPersonalities = [];
@@ -51,16 +54,37 @@ const Movie = () => {
       setPredictedPersonalityTraits(predictedPersonalityTraitsRequest.data);
       const movieTags = await getMovieTags(id);
 
+      let total_sum = 0;
+      let totalPersonalityValues = [0, 0, 0, 0, 0];
+      let prevalent = [];
+      let index_personalities = ["Open", "Agreeable", "Conscientious", "Emotionally Stable", "Extraverted"]
+
       for (const movieTag of movieTags.data) {
         const tempTagPersonalities = await getTagPersonalityData(movieTag.tag_id);
         console.log("tagPersonality: ", tempTagPersonalities.data);
         var key = `${movieTag.tag}`;
         tTags.push(key);
-
+        var personalityValues = Object.values(tempTagPersonalities.data);
+        const sum = personalityValues.reduce((partialSum, a) => partialSum + a, 0);
+        total_sum += sum;
+        let i = 0;
+        Object.keys(tempTagPersonalities.data).forEach(key => {
+          totalPersonalityValues[i++] += tempTagPersonalities.data[key]; 
+          tempTagPersonalities.data[key] = tempTagPersonalities.data[key] / sum;
+        });
         tPersonalities.push({[key]: tempTagPersonalities.data});
       }
       setTags(tTags);
       setTagPersonalities(tPersonalities);
+
+      for (let i = 0; i < totalPersonalityValues.length; i++) {
+        totalPersonalityValues[i] = totalPersonalityValues[i] / total_sum;
+        if (totalPersonalityValues[i] >= 0.2) {
+          prevalent.push(index_personalities[i]);
+        }
+      }
+      setTotalTagValues(totalPersonalityValues);
+      setPrevalentTags(prevalent)
 
       console.log("tags: ", tags);
       console.log("tagPersonalities: ", tPersonalities);
@@ -93,9 +117,10 @@ const Movie = () => {
         predictedRating={predictedRating}
         predictedPersonalityRatings={predictedPersonalityRatings}
         predictedPersonalityTraits={predictedPersonalityTraits}
-        tags = {tags}
+        tags={tags}
         tagPersonalities={tagPersonalities}
-
+        totalTagValues={totalTagValues}
+        prevalentTags={prevalentTags}
       />
     </>
   )
