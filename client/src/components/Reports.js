@@ -62,7 +62,7 @@ export const options = {
   maintainAspectRatio: false,
   
   responsive:false,
-
+  hover: {mode: null},
   text: 'Test',
 };
 

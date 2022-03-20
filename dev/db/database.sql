@@ -113,11 +113,11 @@ CREATE TABLE tag(
 
 CREATE TABLE tagPersonalities(
   tag_id BIGINT REFERENCES tag(tag_id) PRIMARY KEY,
-  agg_openness float8 NOT NULL,
-  agg_agreeableness float8 NOT NULL,
-  agg_emotional_stability float8 NOT NULL,
-  agg_conscientiousness float8 NOT NULL,
-  agg_extraversion float8 NOT NULL
+  agg_openness BIGINT NOT NULL,
+  agg_agreeableness BIGINT NOT NULL,
+  agg_emotional_stability BIGINT NOT NULL,
+  agg_conscientiousness BIGINT NOT NULL,
+  agg_extraversion BIGINT NOT NULL
 );
 
 CREATE TABLE movieTag (
