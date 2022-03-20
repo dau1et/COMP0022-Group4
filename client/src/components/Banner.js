@@ -40,7 +40,7 @@ function Banner({ setIsLoaded }) {
 
         <div className='banner_buttons'>
           
-          <a className='banner_button' href={`/movie/${movieId}`}>Play</a>
+          <a className='banner_button' href={`/movie/${movieId}`}>More Info</a>
         </div>
 
         <h1 className='banner_description'>{movie.overview}</h1>

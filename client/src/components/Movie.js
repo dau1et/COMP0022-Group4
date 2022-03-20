@@ -24,8 +24,10 @@ const Movie = () => {
   const [predictedPersonalityTraits, setPredictedPersonalityTraits] = useState([]);
   const [movieTags, setMovieTags] = useState([]);
   const [tagPersonalities, setTagPersonalities] = useState([]);
+  const [tags, setTags] = useState([]);
 
-  let tPersonalities = []
+  let tTags = [];
+  let tPersonalities = [];
 
   useEffect(() => {
     async function fetchData() {
@@ -48,21 +50,23 @@ const Movie = () => {
       const predictedPersonalityTraitsRequest = await getPredictedPersonalityTraits(id);
       setPredictedPersonalityTraits(predictedPersonalityTraitsRequest.data);
       const movieTags = await getMovieTags(id);
-      // setMovieTags(movieTags.tag);
-      // console.log("TEST");
 
-      console.log(movieTags.data); // [{tag_id: , tag: }, {}}]]
       for (const movieTag of movieTags.data) {
         const tempTagPersonalities = await getTagPersonalityData(movieTag.tag_id);
         console.log("tagPersonality: ", tempTagPersonalities.data);
-        // setTagPersonalities(oldTagPersonalities => [...oldTagPersonalities, {movieTag: tempTagPersonalities.data}])
-        // setTagPersonalities(tempTagPersonalities.data);
-        // const tag = movieTag.tag;
-        // tPersonalities.push({`"tag?: tempTagPersonalities.data});
-        // console.log("tagPersonalities", tagPersonalities);
+        var key = `${movieTag.tag}`;
+        tTags.push(key);
 
+        tPersonalities.push({[key]: tempTagPersonalities.data});
       }
+      setTags(tTags);
+      setTagPersonalities(tPersonalities);
+
+      console.log("tags: ", tags);
       console.log("tagPersonalities: ", tPersonalities);
+      if (tPersonalities.length > 0) {
+        console.log("tagPersonalities keys [0]: ", Object.keys(tPersonalities[0]));
+      }
 
       setIsLoading(false);
     }
@@ -70,11 +74,11 @@ const Movie = () => {
   }, [id]);
 
   return isLoading ? (
-    <div style={{position: "fixed", top: "50%", left: "50%", transform: "translate(-50%, -50%)"}}>
-      <RingLoader color="#0000ff" loading={isLoading}/>
+    <div className='fixed h-full w-full grid place-content-center'>
+      <RingLoader color="#0000ff" loading={isLoading} size={120} />
     </div>
   ) : (
-    <React.Fragment>
+    <>
       <Nav />
       <Overview
         movie={movie}
@@ -89,8 +93,11 @@ const Movie = () => {
         predictedRating={predictedRating}
         predictedPersonalityRatings={predictedPersonalityRatings}
         predictedPersonalityTraits={predictedPersonalityTraits}
+        tags = {tags}
+        tagPersonalities={tagPersonalities}
+
       />
-    </React.Fragment>
+    </>
   )
 }
 

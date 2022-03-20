@@ -48,7 +48,7 @@ function Row({ title, movies, setIsLoaded }) {
     </div>
   ) : (
     <div className='text-white ml-5'>
-      <h2>{title}</h2>
+      <h2 className='font-bold'>{title}</h2>
 
       <div className='row_posters'>
         {movies.map((movie) => {

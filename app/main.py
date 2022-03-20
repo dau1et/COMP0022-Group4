@@ -40,6 +40,10 @@ MOVIE_COLUMNS = [
     "overview",
     "runtime",
     "average_rating",
+    "imdb_score",
+    "rotten_score",
+    "metacritic_score",
+    "awards",
     "popularity",
     "polarity",
     "adult",
@@ -49,7 +53,29 @@ MOVIE_COLUMNS = [
     "revenue",
     "iso639_1",
     "poster_path",
-    "backdrop_path"
+    "backdrop_path",
+]
+
+MOVIE_GENRES = [
+    "Drama"
+    "IMAX"
+    "Film-Noir"
+    "Action"
+    "Children"
+    "Adventure"
+    "Sci-Fi"
+    "Documentary"
+    "Western"
+    "Crime"
+    "Comedy"
+    "Thriller"
+    "Musical"
+    "Animation"
+    "War"
+    "Mystery"
+    "Fantasy"
+    "Horror"
+    "Romance"
 ]
 
 
@@ -95,7 +121,7 @@ async def get_movies(request: Request, runtime_min: int | None = None, runtime_m
 @app.get("/api/movies/{movie_id}")
 async def get_movie(request: Request, movie_id: int):
     async with request.app.state.conn_pool.acquire() as conn:
-        record = await conn.fetchrow("SELECT title, overview, runtime, average_rating, polarity, popularity, adult, status, release_date, budget, revenue, iso639_1, poster_path, backdrop_path FROM Movie WHERE movie_id=$1", movie_id)
+        record = await conn.fetchrow("SELECT title, overview, runtime, average_rating, imdb_score, rotten_score, metacritic_score, awards, polarity, popularity, adult, status, release_date, budget, revenue, iso639_1, poster_path, backdrop_path FROM Movie WHERE movie_id=$1", movie_id)
     if record is None:
         raise HTTPException(status_code=404, detail="Item not found")
     return record
@@ -184,3 +210,8 @@ async def get_tag_personality_data(request: Request, tag_id: int):
     if record is None:
         raise HTTPException(status_code=404, detail="Item not found")
     return record
+
+
+@app.get("/api/genres")
+def get_tag_personality_data():
+    return MOVIE_GENRES

@@ -59,19 +59,19 @@ const Home = () => {
         fetchData();
     }, []);
     
-    let loading = isFetching || !(bannerLoaded && newReleasesLoaded && popularMoviesLoaded && polarisingMoviesLoaded && actionMoviesLoaded && adventureMoviesLoaded && comedyMoviesLoaded && dramaMoviesLoaded && romanceMoviesLoaded && mysteryMoviesLoaded);
+    let loadingImages = !(bannerLoaded && newReleasesLoaded && popularMoviesLoaded && polarisingMoviesLoaded && actionMoviesLoaded && adventureMoviesLoaded && comedyMoviesLoaded && dramaMoviesLoaded && romanceMoviesLoaded && mysteryMoviesLoaded);
     return isFetching ? (
-        <div style={{position: "fixed", top: "50%", left: "50%", transform: "translate(-50%, -50%)"}}>
-            <RingLoader color="#0000ff" loading={loading}/>
+        <div className='fixed h-full w-full grid place-content-center'>
+            <RingLoader color="#0000ff" size={120} />
             {/* <CircularProgress /> */}
         </div>
     ) : (
         <div>
-            <div style={{position: "fixed", top: "50%", left: "50%", transform: "translate(-50%, -50%)", display: loading ? 'block' : 'none'}}>
-                <RingLoader color="#0000ff" loading={loading}/>
+            <div className='fixed h-screen w-screen grid place-content-center' style={{display: loadingImages ? 'grid' : 'none'}}>
+                <RingLoader color="#0000ff" size={120} />
                 {/* <CircularProgress /> */}
             </div>
-            <div style={{display : loading ? 'none' : 'block'}}>
+            <div style={{display : loadingImages ? 'none' : 'block'}}>
                 <Nav />
                 <Banner setIsLoaded={setBannerLoaded} />
 

@@ -13,7 +13,7 @@ function LongAttribute({ name, value }) {
     return (
         <>
             <span className='col-span-1 px-2 font-semibold text-ellipsis'>{`${name}: `}</span>
-            <span className='col-span-8 px-2 font-light text-justify'>{value}</span>
+            <span className='col-span-8 pr-2 font-light text-justify'>{value}</span>
         </>
     );
 }
@@ -57,20 +57,20 @@ function Details({ movie, language, translations, publishers, cast }) {
         ? ['-'] : publishers.map(publisher => publisher.publishing_company + (publisher.publishing_country == null ? '' : ` (${publisher.publishing_country})`));
 
     return (
-        <div className='grid grid-cols-9 gap-x-2 gap-y-1 bg-stone-800 px-4 py-3 w-full max-h-72 overflow-y-scroll'>
-            <Attribute      name="Budget"       value={formatCash(movie.budget)}        />
-            <Attribute      name="Adult"        value={'\u274C' /* \u274C \u2714 */}    />
-            <Attribute      name="Release Date" value={formatDate(movie.release_date)}  />
+        <div className='grid grid-cols-9 gap-x-2 gap-y-2 bg-stone-800 px-4 py-3 w-full max-h-64 overflow-y-scroll'>
+            <Attribute      name="Budget"       value={formatCash(movie.budget)}            />
+            <Attribute      name="Adult"        value={movie.adult ? '\u2714' : '\u274C'}   />
+            <Attribute      name="Release Date" value={formatDate(movie.release_date)}      />
 
-            <Attribute      name="Revenue"      value={formatCash(movie.revenue)}       />
-            <Attribute      name="Language"     value={languageString}                  />
-            <Attribute      name="Runtime"      value={formatTime(movie.runtime)}       />
+            <Attribute      name="Revenue"      value={formatCash(movie.revenue)}           />
+            <Attribute      name="Language"     value={languageString}                      />
+            <Attribute      name="Runtime"      value={formatTime(movie.runtime)}           />
 
-            <LongAttribute  name="Cast"         value={castStrings.join(", ")}          />
+            <LongAttribute  name="Cast"         value={castStrings.join(", ")}              />
 
-            <LongAttribute  name="Translations" value={translationStrings.join(", ")}   />
+            <LongAttribute  name="Translations" value={translationStrings.join(", ")}       />
 
-            <LongAttribute  name="Publishers"   value={publisherStrings.join(", ")}     />
+            <LongAttribute  name="Publishers"   value={publisherStrings.join(", ")}         />
         </div>
     )
 }

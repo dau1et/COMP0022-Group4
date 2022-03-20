@@ -1,20 +1,19 @@
 import React, {useState, useEffect} from "react";
 
 
-const SearchBar = ({ allMovies, searchResults, setSearchResults }) => {
+const SearchBar = ({ allMovies, setSearchResults }) => {
 	const [value, setValue] = useState("");
 
 	useEffect(() => {
-		if (allMovies.data) {
-			console.log(value);
-			const result = (allMovies.data).filter(movie => movie.title.toLowerCase().includes(value.toLowerCase()));
-			console.log(result);
-			setSearchResults(result);
-		}
+		console.log(value);
+		console.log(allMovies);
+		const result = allMovies.filter(movie => movie.title.toLowerCase().includes(value.toLowerCase()));
+		console.log(result);
+		setSearchResults(result);
 	}, [value])
 
 	return (
-		<div className="pt-2 relative mx-auto text-gray-600 inline-block mt-20 justify-center align-middle">
+		<div className="mx-auto text-gray-600 bg-stone-800">
 			<input
 				type="search"
 				value={value}

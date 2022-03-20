@@ -37,6 +37,24 @@ with open("tables/MoviePolarity.csv", encoding="utf-8") as movie_polarity_csv:
         movie_polarities[movie_id] = polarity
 
 
+movie_reactions = {}
+with open("tables/MovieReactions.csv", encoding="utf-8") as movie_reactions_csv:
+    movie_reactions_reader = csv.reader(movie_reactions_csv)
+    for movie_id, imdb_score, rotten_score, metacritic_score, awards in movie_reactions_reader:
+        # if imdb_score:
+        #     imdb_score = float(imdb_score.split("/")[0])
+        # if rotten_score:
+        #     rotten_score = float(rotten_score[:-1]) / 10
+        # if metacritic_score:
+        #     metacritic_score = float(metacritic_score.split("/")[0]) / 10
+        movie_reactions[movie_id] = {
+            "imdb_score": imdb_score,
+            "rotten_score": rotten_score,
+            "metacritic_score": metacritic_score,
+            "awards": awards
+        }
+
+
 async def create_movie_csv(session):
     movie_ids = set()
 
@@ -44,10 +62,14 @@ async def create_movie_csv(session):
         response = await request_tmdb_movie(session, movie_tmdb_id[id])
         movie_writer.writerow([
             id,
-            name,
+            response.get("original_title", name),
             response.get("overview"),
             response.get("runtime"),
             avg_movie_ratings.get(id),
+            movie_reactions.get(id).get("imdb_score"),
+            movie_reactions.get(id).get("rotten_score"),
+            movie_reactions.get(id).get("metacritic_score"),
+            movie_reactions.get(id).get("awards"),
             response.get("popularity"),
             movie_polarities.get(id),
             response.get("adult"),

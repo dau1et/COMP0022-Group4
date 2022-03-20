@@ -9,6 +9,10 @@ CREATE TABLE movie (
   overview VARCHAR(1000),
   runtime INT, -- lets keep it Timestamp atm, we can later change it to something else in the future
   average_rating float8,
+  imdb_score VARCHAR(6),
+  rotten_score VARCHAR(4),
+  metacritic_score VARCHAR(7),
+  awards VARCHAR(1000),
   popularity float8,
   polarity float8,
   adult BOOLEAN,

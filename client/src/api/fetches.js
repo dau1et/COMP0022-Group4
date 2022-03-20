@@ -47,6 +47,10 @@ export async function getMovies(limit) {
     return axios.get(requestUrl);
 }
 
+export async function getGenres() {
+    return axios.get(`${baseURL}/genres`);
+}
+
 export async function getTopMoviesBy(attribute, limit) {
     let requestUrl = `${baseURL}/movies?sort_by=${attribute}&sort_direction=DESC`;
     if (limit !== undefined) {

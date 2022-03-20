@@ -1,5 +1,4 @@
 import React from 'react';
-import AdaptiveText from 'react-adaptive-text';
 import { image_url, no_poster, tmdb } from '../constants';
 import Details from './Details';
 
@@ -15,14 +14,22 @@ function RatingFraction(average) {
 }
 
 function Overview({ movie, genres, language, translations, publishers, cast }) {
-  // if (movie === undefined || genres === undefined) return(
-  //   <div className='text-white'>
-  //     MOVIE NOT FOUND
-  //   </div>
-  // );
+
+  function headerFontSize(text) {
+    console.log(text.length);
+    if (Math.floor(text.length / 36) < 1)
+      return 6;
+    if (Math.floor(text.length / 45) < 1)
+      return 5;
+    if (Math.floor(text.length / 59) < 1)
+      return 4;
+    if (Math.floor(text.length / 80) < 1)
+      return 3;
+    return 2;
+  }
   
   return (
-    <div className='flex p-32'>
+    <div className='flex px-32 pt-32 pb-24'>
 
         <img 
             className="object-contain mr-16 max-h-[600px]" 
@@ -31,8 +38,7 @@ function Overview({ movie, genres, language, translations, publishers, cast }) {
         />
 
         <div className="flex flex-col h-auto max-h-[600px]">
-            <AdaptiveText />
-            <h1 className='uppercase text-6xl h-[72px] font-semibold'>{movie.title}</h1>
+            <h1 className={`uppercase h-[72px] font-semibold text-${headerFontSize(movie.title)}xl`}>{movie.title}</h1>
 
             <div className='flex flex-grow flex-col justify-between'>
 
@@ -40,7 +46,7 @@ function Overview({ movie, genres, language, translations, publishers, cast }) {
                 <div className='flex justify-start mb-2 h-9'>
                   {genres.map((genre, index) => (
                     <div key={index} className='text-white text-sm font-semibold rounded-lg bg-neutral-300/50 mr-5 px-5 py-2'>
-                        {genre.genre}
+                      {genre.genre}
                     </div>
                   ))}
                 </div>

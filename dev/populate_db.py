@@ -48,7 +48,7 @@ if __name__ == "__main__":
 
     # a list of (table_name, field_count) tuples
     tables = [
-        ("Language", 2), ("Movie", 15), ("MovieTmdb", 2), ("Actor", 3), 
+        ("Language", 2), ("Movie", 19), ("MovieTmdb", 2), ("Actor", 3), 
         ("MovieActor", 2), ("MovieGenre", 2), ("Publisher", 3), ("MoviePublisher", 2), 
         ("PersonalityData", 6), ("Rating", 4), ("MovieTranslation", 2),
         ("PredictedMovieRating", 2), ("PredictedPersonalityRatings", 6), ("PredictedPersonalityTraits", 6),
