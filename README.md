@@ -27,13 +27,7 @@ cd COMP0022-Group4
 
 ### Create the Required Data
 
-First, install the `aiohttp` package:
-
-```bash
-pip3 install aiohttp
-```
-
-Then run the script to request the movie data and create CSVs:
+Run the script to request the movie data and create CSVs:
 
 ```bash
 cd csv_data
