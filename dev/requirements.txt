@@ -5,3 +5,6 @@ regex
 fastapi
 uvicorn[standard]
 asyncpg
+opentelemetry-sdk
+opentelemetry-instrumentation-fastapi
+opentelemetry-exporter-jaeger

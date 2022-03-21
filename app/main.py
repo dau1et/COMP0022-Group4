@@ -1,16 +1,29 @@
-import asyncio
 import aioredis
 import json
 import datetime
+import os
 from typing import Literal
 
 import asyncpg
 from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
+from opentelemetry import trace
+from opentelemetry.exporter.jaeger.thrift import JaegerExporter
+from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+from opentelemetry.sdk.resources import SERVICE_NAME, Resource
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
 
 from app.query import QueryBuilder
 
 app = FastAPI()
+
+provider = TracerProvider(resource=Resource.create({SERVICE_NAME: os.environ.get("JAEGER_SERVICE_NAME")}))
+exporter = JaegerExporter(agent_host_name=os.environ.get("JAEGER_AGENT_HOST"), agent_port=int(os.environ.get("JAEGER_AGENT_PORT")))
+provider.add_span_processor(BatchSpanProcessor(exporter))
+trace.set_tracer_provider(provider)
+
+FastAPIInstrumentor.instrument_app(app)
 
 origins = [
     "http://localhost:3000",
@@ -85,7 +98,7 @@ async def redis_init():
     redis = aioredis.from_url("redis://redis")
     return redis
 
-async def redis_cache(redis, key, db_query, expiry):
+async def redis_cache(redis, key, db_query):
 
     value = await redis.get(key)
 
@@ -138,8 +151,7 @@ async def get_movies(request: Request, runtime_min: int | None = None, runtime_m
         result = await redis_cache(
             redis,
             "DBCACHE_GET_ALL_MOVIES",
-            "SELECT title, overview, runtime, average_rating, imdb_score, rotten_score, metacritic_score, awards, polarity, popularity, adult, status, release_date, budget, revenue, iso639_1, poster_path, backdrop_path FROM Movie;",
-            300
+            "SELECT title, overview, runtime, average_rating, imdb_score, rotten_score, metacritic_score, awards, polarity, popularity, adult, status, release_date, budget, revenue, iso639_1, poster_path, backdrop_path FROM Movie;"
         )
 
         return result
@@ -271,8 +283,7 @@ async def get_all_languages(request: Request):
     result = await redis_cache(
         redis,
         "DBCACHE_GET_ALL_LANGUAGES",
-        "SELECT Language.iso639_1, Language.language_name FROM Language;",
-        300
+        "SELECT Language.iso639_1, Language.language_name FROM Language;"
     )
 
     return result
