@@ -11,28 +11,8 @@ import {
 
 
 const App = () => {
-  // return (
-  //   <div className="app">
-  //     <Nav />
-  //     <Banner />
-
-  //     <Row title="Most Popular" fetchUrl={requests.fetchTopRated} />
-  //     <Row title="Most Polarising" fetchUrl={requests.fetchTrending} />
-  //     <Row title="..." fetchUrl={requests.fetchTrending} />
-  //     <Row title="..." fetchUrl={requests.fetchTrending} />
-  //   </div>
-  // );
-
-  // Longest name: 95165
-  // Most publishers: 330764
-
-
-
-
   return (
-
-    <>
-      <Router>
+    <><Router>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/movie/:id" element={<Movie />} />
@@ -43,11 +23,7 @@ const App = () => {
               <Reports movieId={634649} /> */}
 
           </Routes>
-
-      </Router>
-
-    </>
-
+      </Router></>
   )
 }
 

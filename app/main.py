@@ -18,8 +18,10 @@ from app.query import QueryBuilder
 
 app = FastAPI()
 
-provider = TracerProvider(resource=Resource.create({SERVICE_NAME: os.environ.get("JAEGER_SERVICE_NAME")}))
-exporter = JaegerExporter(agent_host_name=os.environ.get("JAEGER_AGENT_HOST"), agent_port=int(os.environ.get("JAEGER_AGENT_PORT")))
+provider = TracerProvider(resource=Resource.create(
+    {SERVICE_NAME: os.environ.get("JAEGER_SERVICE_NAME")}))
+exporter = JaegerExporter(agent_host_name=os.environ.get(
+    "JAEGER_AGENT_HOST"), agent_port=int(os.environ.get("JAEGER_AGENT_PORT")))
 provider.add_span_processor(BatchSpanProcessor(exporter))
 trace.set_tracer_provider(provider)
 
@@ -94,9 +96,6 @@ MOVIE_GENRES = [
     "Romance"
 ]
 
-async def redis_init():
-    redis = aioredis.from_url("redis://redis")
-    return redis
 
 async def redis_cache(redis, key, db_query):
 
@@ -107,30 +106,33 @@ async def redis_cache(redis, key, db_query):
 
     def serialize_dates(v):
         return v.isoformat()
-    
+
     if key == "DBCACHE_GET_ALL_LANGUAGES" or key == "DBCACHE_GET_ALL_MOVIES":
 
         async with app.state.conn_pool.acquire() as conn:
             records = await conn.fetch(db_query)
-        
+
         await redis.set(
             key,
-            json.dumps([dict(record) for record in records], default=serialize_dates),
+            json.dumps([dict(record)
+                       for record in records], default=serialize_dates),
             # timeout=2
         )
         print(f"\nREDIS FIRST TIME: {key}")
 
     return records
 
+
 @app.on_event("startup")
 async def startup():
     app.state.conn_pool = await asyncpg.create_pool(
-        host = "db",
-        port = 5432,
-        user = "moviedb-dev",
-        password = "moviedb-dev",
-        database = "moviedb"
+        host="db",
+        port=5432,
+        user="moviedb-dev",
+        password="moviedb-dev",
+        database="moviedb"
     )
+    app.state.redis = aioredis.from_url("redis://redis")
 
 
 @app.on_event("shutdown")
@@ -139,27 +141,27 @@ async def shutdown():
 
 
 @app.get("/api/movies")
-async def get_movies(request: Request, runtime_min: int | None = None, runtime_max: int | None = None, 
-                        revenue_min: float | None = None, revenue_max: float | None = None,
-                        release_date_min: datetime.date | None = None, release_date_max: datetime.date | None = None,
-                        genres: list[str] | None = Query(None), language: str | None = None,
-                        sort_by: SortFields = "title", sort_direction: SortDirection = "ASC",
-                        limit: int | None = None, row_min: int | None = None, row_max: int | None = None):
+async def get_movies(request: Request, runtime_min: int | None = None, runtime_max: int | None = None,
+                     revenue_min: float | None = None, revenue_max: float | None = None,
+                     release_date_min: datetime.date | None = None, release_date_max: datetime.date | None = None,
+                     genres: list[str] | None = Query(None), language: str | None = None,
+                     sort_by: SortFields = "title", sort_direction: SortDirection = "ASC",
+                     limit: int | None = None, row_min: int | None = None, row_max: int | None = None):
 
-    if sort_by == "title" and sort_direction=="ASC" and not(any([runtime_min, runtime_max, revenue_min, revenue_max, release_date_min, release_date_max, genres, language, limit, row_min, row_max])):
-        redis = await redis_init()
+    if sort_by == "title" and sort_direction == "ASC" and not(any([runtime_min, runtime_max, revenue_min, revenue_max, release_date_min, release_date_max, genres, language, limit, row_min, row_max])):
         result = await redis_cache(
-            redis,
+            app.state.redis,
             "DBCACHE_GET_ALL_MOVIES",
             "SELECT title, overview, runtime, average_rating, imdb_score, rotten_score, metacritic_score, awards, polarity, popularity, adult, status, release_date, budget, revenue, iso639_1, poster_path, backdrop_path FROM Movie;"
         )
 
         return result
-    
+
     query_builder = QueryBuilder(MOVIE_COLUMNS, "Movie", "movie_id")
     query_builder.add_range_filter("runtime", runtime_min, runtime_max)
     query_builder.add_range_filter("revenue", revenue_min, revenue_max)
-    query_builder.add_range_filter("release_date", release_date_min, release_date_max)
+    query_builder.add_range_filter(
+        "release_date", release_date_min, release_date_max)
     query_builder.add_row_bounds(row_min, row_max)
     if language is not None:
         query_builder.add_equality_filter("iso639_1", language)
@@ -167,7 +169,8 @@ async def get_movies(request: Request, runtime_min: int | None = None, runtime_m
     #     query_builder.add_membership_filter("genre", genres, from_table="MovieGenre")
     if genres is not None:
         for genre in genres:
-            query_builder.add_equality_filter("genre", genre, from_table="MovieGenre")
+            query_builder.add_equality_filter(
+                "genre", genre, from_table="MovieGenre")
     query_builder.add_order_by(sort_by, sort_direction)
     if limit is not None:
         query_builder.add_limit(limit)
@@ -278,10 +281,9 @@ def get_tag_personality_data():
 
 
 @app.get("/api/languages")
-async def get_all_languages(request: Request):
-    redis = await redis_init()
+async def get_all_languages():
     result = await redis_cache(
-        redis,
+        app.state.redis,
         "DBCACHE_GET_ALL_LANGUAGES",
         "SELECT Language.iso639_1, Language.language_name FROM Language;"
     )

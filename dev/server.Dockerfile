@@ -8,6 +8,7 @@ RUN python3 -m venv /code/venv && \
 COPY csv_data /code/csv_data
 COPY dev/start_server.sh /code/start_server.sh
 COPY dev/db/database.sql /code/database.sql
+COPY dev/.env /code/.env
 COPY dev/populate_db.py /code/populate_db.py
 # COPY app /code/app  for deployment, unmount the volume from the docker-compose.yml, and uncomment this line.
 ENTRYPOINT ["/bin/bash", "/code/start_server.sh"]

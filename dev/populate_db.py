@@ -1,6 +1,11 @@
 import psycopg2
 import csv
 import time
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 def cast_check(val):
     if not val or val == 'None':
@@ -13,6 +18,7 @@ def cast_check(val):
 
     return val
 
+
 def populate_table(table_name, field_count):
     # for it to work on the docker container /code/csv_data
     # for it to work locally: ../csv_data
@@ -22,19 +28,21 @@ def populate_table(table_name, field_count):
         reader = csv.reader(csvfile, delimiter=',')
         for row in reader:
             fields = [cast_check(field) for field in row]
-            cur.execute(f"INSERT INTO {table_name} VALUES " + f"({', '.join('%s' for _ in range(field_count))})", fields)
+            cur.execute(f"INSERT INTO {table_name} VALUES " +
+                        f"({', '.join('%s' for _ in range(field_count))})", fields)
+
 
 if __name__ == "__main__":
 
     for i in range(20):
         try:
             connection = psycopg2.connect(
-                        host = "db",
-                        database = "moviedb",
-                        user = "moviedb-dev",
-                        password = "moviedb-dev",
-                        port = 5432
-                    )
+                host="db",
+                database=os.getenv("POSTGRES_DB"),
+                user=os.getenv("POSTGRES_USER"),
+                password=os.getenv("POSTGRES_PASSWORD"),
+                port=5432
+            )
         except:
             print("Unable to connect to the database.")
             print("\nRetrying...")
@@ -48,10 +56,11 @@ if __name__ == "__main__":
 
     # a list of (table_name, field_count) tuples
     tables = [
-        ("Language", 2), ("Movie", 19), ("MovieTmdb", 2), ("Actor", 3), 
-        ("MovieActor", 2), ("MovieGenre", 2), ("Publisher", 3), ("MoviePublisher", 2), 
+        ("Language", 2), ("Movie", 19), ("MovieTmdb", 2), ("Actor", 3),
+        ("MovieActor", 2), ("MovieGenre", 2), ("Publisher", 3), ("MoviePublisher", 2),
         ("PersonalityData", 6), ("Rating", 4), ("MovieTranslation", 2),
-        ("PredictedMovieRating", 2), ("PredictedPersonalityRatings", 6), ("PredictedPersonalityTraits", 6),
+        ("PredictedMovieRating", 2), ("PredictedPersonalityRatings",
+                                      6), ("PredictedPersonalityTraits", 6),
         ("Tag", 2), ("TagPersonalities", 6), ("MovieTag", 2)
     ]
 

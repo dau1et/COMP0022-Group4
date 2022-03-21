@@ -3,10 +3,8 @@ version: "3.9"
 services:
   db:
     image: postgres
-    environment:
-      - POSTGRES_PASSWORD=moviedb-dev
-      - POSTGRES_USER=moviedb-dev
-      - POSTGRES_DB=moviedb
+    env_file:
+      - ./postgres.env
     build:
       context: ..
       dockerfile: ./dev/database.Dockerfile
@@ -16,9 +14,8 @@ services:
       - 5432:5432
   pgadmin:
     image: dpage/pgadmin4
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=user@domain.com
-      - PGADMIN_DEFAULT_PASSWORD=admin
+    env_file:
+      - ./pgadmin.env
     ports:
       - 5050:80
     volumes:

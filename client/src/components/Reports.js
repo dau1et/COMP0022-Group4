@@ -42,13 +42,13 @@ export default function Report({ movie, predictedRating, predictedPersonalityRat
       }
     }
     
-    for (var trait in predictedPersonalityTraits){
-      if (predictedPersonalityTraits[trait]){
-        if(looped == total - 2 ){
+    for (var trait in predictedPersonalityTraits) {
+      if (predictedPersonalityTraits[trait]) {
+        if (looped == total - 2 ){
           sentence += `<span className="font-bold ${confidence_to_color[predictedPersonalityTraits[trait]]}">${shortened_trait[trait]}</span> `
-        } else if(total == 1 || looped < total - 1 || looped < total - 2) {
+        } else if (total == 1 || looped < total - 1 || looped < total - 2) {
           sentence += `<span className="font-bold ${confidence_to_color[predictedPersonalityTraits[trait]]}">${shortened_trait[trait]}</span>, `
-        } else{
+        } else {
           sentence += `and <span className="font-bold ${confidence_to_color[predictedPersonalityTraits[trait]]}">${shortened_trait[trait]}</span>`
         }
         looped += 1

@@ -1,6 +1,7 @@
 psycopg2~=2.9.3
 asyncio
 aioredis
+python-dotenv
 regex
 fastapi
 uvicorn[standard]

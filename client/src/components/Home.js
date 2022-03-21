@@ -6,7 +6,6 @@ import Row from './Row';
 import { getMoviesByGenre, getTopMoviesBy } from '../api/fetches';
 
 import RingLoader from 'react-spinners/RingLoader';
-import { CircularProgress } from '@mui/material';
 
 const Home = () => {
     const [isFetching, setIsFetching] = useState(true);
@@ -63,13 +62,11 @@ const Home = () => {
     return isFetching ? (
         <div className='fixed h-full w-full grid place-content-center'>
             <RingLoader color="#0000ff" size={120} />
-            {/* <CircularProgress /> */}
         </div>
     ) : (
         <div>
             <div className='fixed h-screen w-screen grid place-content-center' style={{display: loadingImages ? 'grid' : 'none'}}>
                 <RingLoader color="#0000ff" size={120} />
-                {/* <CircularProgress /> */}
             </div>
             <div style={{display : loadingImages ? 'none' : 'block'}}>
                 <Nav />

@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import axios from '../api/axios';
-import requests from '../api/requests';
 import { getMovie } from '../api/fetches';
-import '../styles/Banner.css';
+import '../styles/App.css';
 
 function Banner({ setIsLoaded }) {
   const [movie, setMovie] = useState([]);
@@ -26,7 +24,7 @@ function Banner({ setIsLoaded }) {
   }, []);
 
   return (
-    <header className='banner' 
+    <header className='text-white object-contain h-[448px]' 
       style={{
         backgroundSize: "cover",
         backgroundImage: `url(
@@ -35,18 +33,21 @@ function Banner({ setIsLoaded }) {
         backgroundPosition: "center center",
       }}
     >
-      <div className='banner_contents'>
-        <h1 className='banner_title'>{movie.title}</h1>
+      <div className='ml-8 pt-[180px] h-[200px]'>
+        <h1 className='text-5xl font-extrabold pb-[1rem]'>{movie.title}</h1>
 
-        <div className='banner_buttons'>
+        <div>
           
-          <a className='banner_button' href={`/movie/${movieId}`}>More Info</a>
+          <a 
+            className='cursor-pointer text-white outline-none border-none font-bold rounded px-8 py-2 mr-4 bg-neutral-800/50 hover:text-black hover:bg-[#e6e6e6] hover:transition' 
+            href={`/movie/${movieId}`}
+          >More Info</a>
         </div>
 
-        <h1 className='banner_description'>{movie.overview}</h1>
+        <h1 className='w-[45rem] pt-4 text-[0.8rem] max-w-[560px] h-[80px] max-h-[120px]'>{movie.overview}</h1>
       </div>
 
-      <div className='banner-fadeBottom' />
+      <div className='h-[248px] fade' />
     </header>
   )
 }

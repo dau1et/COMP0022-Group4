@@ -1,17 +1,12 @@
 import React, {useState, useEffect} from "react";
 import { useNavigate } from 'react-router-dom';
-import { image_url } from "../constants";
 import Nav from './Nav';
-import Banner from './Banner';
-import SearchBar from './SearchBar';
 import { getGenres, getMovies, getAllLanguages } from "../api/fetches";
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import RingLoader from 'react-spinners/RingLoader';
 import Box from '@mui/material/Box';
 import Slider from '@mui/material/Slider';
-import InfiniteScroll from 'react-infinite-scroll-component';
-import MovieButton from "./MovieButton";
 import SearchResults from "./SearchResults";
 
 const Library = () => {
@@ -179,60 +174,16 @@ const Library = () => {
 
 
 			{searchResults.length > 0 ? (
-        // <div className="flex flex-wrap justify-evenly px-32 py-8">
-        //   {(
-        //     searchResults.slice(0, 120)).map((item, index) => (
-        //       item.poster_path ? (
-				// 		    <img 
-        //           key={item.movie_id} 
-        //           className='object-contain max-h-[270px] aspect-[2/3] mx-2 my-3 hover:scale-105 duration-[450ms] rounded-xl border-solid border-y-2 border-[#0000ff]' 
-        //           src={`${image_url}${item.poster_path}`} 
-        //           alt={item.name} 
-        //           onClick={() => navigate(`/movie/${item.movie_id}`, { replace: true })}
-        //         />
-        //       ) : (
-				// 			  <a 
-        //           key={index} 
-        //           className='flex bg-stone-800 justify-center items-center text-center font-semibold h-[270px] aspect-[2/3] rounded mx-2 my-3 p-3 hover:scale-105 duration-[450ms] rounded-xl border-solid border-y border-[#0000ff]' 
-        //           href={`/movie/${item.movie_id}`}
-        //         >
-        //           {item.title}
-        //         </a>
-        //       )
-        //     )
-        //   )}
-        // </div>
         <div>
           <div className='fixed h-screen w-screen grid place-content-center' style={{display: isLoading ? 'grid' : 'none'}}>
             <RingLoader color="#0000ff" size={120} />
           </div>
           <div style={{display: isLoading ? 'none' : 'grid'}}>
             <SearchResults movies={searchResults} setImagesLoaded={setResultsLoaded} />
-            {/* <InfiniteScroll
-              dataLength={moviesArray.length} 
-              next={fetchBatch}
-              hasMore={hasMoreResults}
-              loader={<h4>Loading...</h4>}
-              scrollThreshold={0.8}
-              style={{width: "100%", display: 'block'}}
-            >
-              <div className="flex flex-wrap justify-evenly px-32 py-8">
-                {moviesArray.map((item, index) => (
-                    <MovieButton 
-                      key={item.movie_id} 
-                      id={item.movie_id} 
-                      title={item.title} 
-                      poster_path={item.poster_path} 
-                      max_height={'270px'} 
-                    />
-                  )
-                )}
-              </div>
-            </InfiniteScroll> */}
           </div>
         </div>
 			) : (
-        <div></div>
+        <div />
       )}
     </div>
 
