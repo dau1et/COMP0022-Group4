@@ -161,7 +161,7 @@ export default function Report({ movie, predictedRating, predictedPersonalityRat
         <br/>
         <div>
           <Typography align='center' sx={{ px:"30%" }}>
-            *Methodology: We sourced additional data from the MovieLens group to attain the personality 
+            *Methodology (Predictive Modelling Based - Supervised): We sourced additional data from the MovieLens group to attain the personality 
             values for a user. To obtain our prediction, we took 20% (80/20 test-train split) of all users who rated the movie and passed
             their personality data into a KNeighborsRegressor regression model. We conducted some preprocessing
             in the form of scaling to normalise the data.
@@ -189,7 +189,8 @@ export default function Report({ movie, predictedRating, predictedPersonalityRat
           <kbd className='bg-red-600 mx-2 px-1'>Low</kbd>
           </div>
           
-          <div className = "text-center">If you watch <span className="font-bold">{movie.title}</span> you are {parse(getTraitString())}</div>
+          <div className = "text-center">If you watch <span className="font-bold">{movie.title}</span> you are {parse(getTraitString())}<sup>[1]</sup></div>
+ 
           <div className = "mt-7 text-center font-bold mb-5">Predictions based on Personality Type</div>
           <Grid container spacing={20} alignItems='center' justifyContent='center'>
             {pred_arr.map((rating, index) => {
@@ -260,8 +261,11 @@ export default function Report({ movie, predictedRating, predictedPersonalityRat
                       </div>
                     </div>)
             })} */}
-          <div className = "font-extralight text-center mt-4">
-          *Prediction based on having a heavy weighting on a particular trait
+          <div className = "font-thin text-center mt-4">
+           *Prediction based on having a heavy weighting on a particular trait
+          </div>
+          <div className = "font-thin text-center mt-4">
+          [1] Prediction based on correlation (Deviation Detection) of rating to personality value
           </div>
         </AccordionDetails>
       </Accordion>

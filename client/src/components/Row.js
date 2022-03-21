@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { image_url } from '../constants';
+import MovieButton from "./MovieButton";
 import '../styles/App.css';
 
 function Row({ title, movies, setIsLoaded }) {
@@ -40,12 +41,14 @@ function Row({ title, movies, setIsLoaded }) {
         {movies.map((movie) => {
           if (movie.poster_path !== null) {
             return (
-              <img 
+              <MovieButton 
                 key={movie.movie_id} 
-                className='object-contain w-full max-h-[200px] rounded m-[5px] hover:scale-105 duration-[450ms] rounded-xl border-solid border-y-2 border-stone-800 hover:border-[#0000ff]' 
-                src={`${image_url}${movie.poster_path}`} 
-                alt={movie.name} 
-                onClick={() => navigate(`/movie/${movie.movie_id}`, { replace: true })}
+                id={movie.movie_id} 
+                title={movie.title} 
+                poster_path={movie.poster_path} 
+                popularity={movie.popularity} 
+                polarity={movie.polarity} 
+                max_height={'240px'} 
               />
             )
           }
