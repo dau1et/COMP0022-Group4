@@ -72,4 +72,5 @@ npm run start
 Go to http://localhost:3000 and enjoy the Movie Analytics app :)
 
 API documentation can be accessed at http://localhost:3001/docs
+
 Application monitoring can be accessed at http://localhost:16686
