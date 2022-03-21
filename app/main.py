@@ -1,3 +1,6 @@
+import asyncio
+import aioredis
+import json
 import datetime
 from typing import Literal
 
@@ -78,6 +81,33 @@ MOVIE_GENRES = [
     "Romance"
 ]
 
+async def redis_init():
+    redis = aioredis.from_url("redis://redis")
+    return redis
+
+async def redis_cache(redis, key, db_query, expiry):
+
+    value = await redis.get(key)
+
+    if value:
+        return json.loads(value)
+
+    def serialize_dates(v):
+        return v.isoformat()
+    
+    if key == "DBCACHE_GET_ALL_LANGUAGES" or key == "DBCACHE_GET_ALL_MOVIES":
+
+        async with app.state.conn_pool.acquire() as conn:
+            records = await conn.fetch(db_query)
+        
+        await redis.set(
+            key,
+            json.dumps([dict(record) for record in records], default=serialize_dates),
+            # timeout=2
+        )
+        print(f"\nREDIS FIRST TIME: {key}")
+
+    return records
 
 @app.on_event("startup")
 async def startup():
@@ -102,6 +132,18 @@ async def get_movies(request: Request, runtime_min: int | None = None, runtime_m
                         genres: list[str] | None = Query(None), language: str | None = None,
                         sort_by: SortFields = "title", sort_direction: SortDirection = "ASC",
                         limit: int | None = None, row_min: int | None = None, row_max: int | None = None):
+
+    if sort_by == "title" and sort_direction=="ASC" and not(any([runtime_min, runtime_max, revenue_min, revenue_max, release_date_min, release_date_max, genres, language, limit, row_min, row_max])):
+        redis = await redis_init()
+        result = await redis_cache(
+            redis,
+            "DBCACHE_GET_ALL_MOVIES",
+            "SELECT title, overview, runtime, average_rating, imdb_score, rotten_score, metacritic_score, awards, polarity, popularity, adult, status, release_date, budget, revenue, iso639_1, poster_path, backdrop_path FROM Movie;",
+            300
+        )
+
+        return result
+    
     query_builder = QueryBuilder(MOVIE_COLUMNS, "Movie", "movie_id")
     query_builder.add_range_filter("runtime", runtime_min, runtime_max)
     query_builder.add_range_filter("revenue", revenue_min, revenue_max)
@@ -225,6 +267,12 @@ def get_tag_personality_data():
 
 @app.get("/api/languages")
 async def get_all_languages(request: Request):
-    async with request.app.state.conn_pool.acquire() as conn:
-        records = await conn.fetch("SELECT Language.iso639_1, Language.language_name FROM Language;")
-    return records
+    redis = await redis_init()
+    result = await redis_cache(
+        redis,
+        "DBCACHE_GET_ALL_LANGUAGES",
+        "SELECT Language.iso639_1, Language.language_name FROM Language;",
+        300
+    )
+
+    return result

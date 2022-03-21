@@ -18,8 +18,8 @@ function MovieButton({ id, title, poster_path, popularity, polarity, show, max_h
         }
     }
 
-    const h = 'h-[' + max_height + ']';
-    const max_h = 'max-h-[' + max_height + ']';
+    const h = 'h-[' + max_height + 'px]';
+    const max_h = 'max-h-[' + max_height + 'px]';
 
     const style = `
         aspect-[2/3] cursor-pointer 
@@ -30,12 +30,12 @@ function MovieButton({ id, title, poster_path, popularity, polarity, show, max_h
     if (poster_path) {
         return (
             <a 
-                className={`relative mx-2 my-3 aspect-[2/3] ${h} group`} 
+                className={`relative mx-2 my-3 aspect-[2/3] h-[270px] group`} 
                 href={`/movie/${id}`}
             >
                 <img 
                     className={`
-                        ${max_h} object-contain aspect-[2/3] rounded-xl border-y-2 border-stone-800 group-hover:border-[#0000ff] group-hover:scale-105 duration-[300ms]
+                        max-h-[270px] object-contain aspect-[2/3] rounded-xl border-y-2 border-stone-800 group-hover:border-[#0000ff] group-hover:scale-105 duration-[300ms]
                     `.trim()} 
                     src={`${image_url}${poster_path}`} 
                     alt={title} 

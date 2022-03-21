@@ -65,7 +65,7 @@ const SearchResults = ({ movies, setImagesLoaded }) => {
       dataLength={displayedMovies.length} 
       next={fetchBatch}
       hasMore={hasMoreResults}
-      loader={<h4>Loading...</h4>}
+      // loader={<h4>Loading...</h4>}
       scrollThreshold={0.8}
       style={{width: "100%", display: 'block'}}
     >
@@ -79,7 +79,7 @@ const SearchResults = ({ movies, setImagesLoaded }) => {
               popularity={item.popularity} 
               polarity={item.polarity} 
               show={true} 
-              max_height={'270px'} 
+              max_height={270} 
             />
           )
         )}

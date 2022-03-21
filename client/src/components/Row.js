@@ -48,7 +48,7 @@ function Row({ title, movies, setIsLoaded }) {
                 poster_path={movie.poster_path} 
                 popularity={movie.popularity} 
                 polarity={movie.polarity} 
-                max_height={'240px'} 
+                max_height={240} 
               />
             )
           }
