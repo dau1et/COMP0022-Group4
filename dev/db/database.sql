@@ -7,7 +7,7 @@ CREATE TABLE movie (
   movie_id BIGINT PRIMARY KEY UNIQUE,
   title VARCHAR(255) NOT NULL,
   overview VARCHAR(1000),
-  runtime INT, -- lets keep it Timestamp atm, we can later change it to something else in the future
+  runtime INT,
   average_rating float8,
   imdb_score VARCHAR(6),
   rotten_score VARCHAR(4),
@@ -16,11 +16,11 @@ CREATE TABLE movie (
   popularity float8,
   polarity float8,
   adult BOOLEAN,
-  status VARCHAR(50), -- remove it later
-  release_date TIMESTAMP, -- same, might chage the datatype later
+  status VARCHAR(50),
+  release_date TIMESTAMP,
   budget BIGINT,
   revenue BIGINT,
-  ISO639_1 VARCHAR(2) REFERENCES language(ISO639_1), -- can we use a dash in the field name?
+  ISO639_1 VARCHAR(2) REFERENCES language(ISO639_1),
   poster_path VARCHAR(100),
   backdrop_path VARCHAR(100)
 );
