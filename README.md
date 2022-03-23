@@ -9,6 +9,19 @@ _Note: GitHub Insights are not full accurate representations of the work distrib
 ![Home Page Demo](./demo/home.gif)
 ![Library Page Demo](./demo/library.gif)
 
+
+## Used Technologies
+
+- **PostgreSQL DBMS**
+- **pgAdmin**
+- **Python FastAPI (async functions and connection pools)**
+- **React, TailwindCSS**
+- **Docker & Docker Compose (Persistent Database via Volumes)**
+- **Redis Caching (connection pools and autoreconnecting enabled)**
+- **Jaeger Logging and Monitoring**
+- **Cronjob for Database Backups**
+- **Additional Bash Shell Scripts for Easy Deployment**
+
 ## Getting Started
 
 ### Prerequisites
@@ -48,7 +61,7 @@ docker-compose up --build
 (OPTIONAL) To enable database backups, run:
 
 ```bash
-./start_backups
+./start_backups.sh
 ```
 
 ### Startup the Client
